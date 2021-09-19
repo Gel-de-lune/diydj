@@ -1,0 +1,94 @@
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+}
+
+.container {
+  height: 100%;
+  overflow: hidden;
+  color: #FFF;
+}
+
+.col {
+  height: 100%;
+  float: left;
+}
+
+.row {
+  width: 100%;
+  /* overflow: hidden; */
+}
+
+.h_ratio3per13  { height: calc(100% * 3  / 13); }
+.h_ratio5per13  { height: calc(100% * 5  / 13); }
+.h_ratio8per13  { height: calc(100% * 8  / 13); }
+.h_ratio1per10  { height: calc(100% * 1  / 10); }
+.h_ratio9per10  { height: calc(100% * 9  / 10); }
+.h_ratio1per9   { height: calc(100% * 1  /  9); }
+.h_ratio2per9   { height: calc(100% * 2  /  9); }
+.h_ratio1per3   { height: calc(100% * 1  /  3); }
+
+.w_ratio5per21  { width: calc(100% * 5  / 21); }
+.w_ratio8per21  { width: calc(100% * 8  / 21); }
+.w_ratio3per13  { width: calc(100% * 3  / 13); }
+.w_ratio10per13 { width: calc(100% * 10 / 13); }
+.w_ratio1per4   { width: calc(100% * 1  /  4); }
+.w_ratio1per3   { width: calc(100% * 1  /  3); }
+.w_ratio1per2   { width: calc(100% * 1  /  2); }
+
+.center {
+  background: #333;
+  overflow: hidden;
+}
+
+.side {
+  background: linear-gradient(to left top, black, darkgray);
+}
+
+.controller {
+  background: #222;
+  overflow: hidden;
+}
+
+.mixerbottom {
+  background: #111;
+}
+
+.util {
+  background: #222;
+}
+
+.button_1,.filelist {
+  height: 100%;
+  width: 100%;
+}
+
+.tile_container {
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tile {
+  height: calc(100% / 3);
+  width: calc(100% / 4);
+}
+
+.fader {
+  width: 100%;
+}
+
+.range_virtical {
+  -webkit-appearance: slider-vertical;
+}
+
+.input,.volume {
+  height: 75%;
+}
+
+input.browse {
+  display: none;
+}

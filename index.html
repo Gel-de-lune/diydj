@@ -1,0 +1,201 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>DIY DJ</title>
+    <meta name="description" content="Do it yourself DJ for everyone.">
+    <meta name="author" content="">
+
+    <meta property="og:title" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:description" content="">
+    <meta property="og:image" content="">
+  
+    <link rel="icon" href="">
+
+    <link rel="stylesheet" href="css/reboot.css">
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="col w_ratio8per21 side">
+        <!-- A SIDE-->
+        <div class="row h_ratio8per13">A TURNTABLE
+          <!-- TURNTABLE -->
+          <div class="row h_ratio3per13">
+            <div class="col w_ratio1per2">AUDIO PLAYER
+              <!-- AUDIO PLAYER -->
+              <audio controls></audio>
+            </div>
+            <div class="col w_ratio1per2">PITCH FADER
+              <!-- PITCHFADER -->
+              <input class="fader" type="range" min="0" max="127" step="1" value="64">
+            </div>
+          </div>
+        </div>
+        <div class="row h_ratio5per13 controller">
+          <!-- CONTROLLERS -->
+          <div class="col w_ratio3per13">CUE&PLAY
+            <!-- CUE&PLAY -->
+            <div class="row h_ratio1per3">
+              <button class="button_1">CUE</button>
+            </div>
+            <div class="row h_ratio1per3">
+              <button class="button_1">PLAY</button>
+            </div>
+          </div>
+          <div class="col w_ratio10per13">PARFORMANS PAD
+            <!-- PARFORMANS PAD -->
+            <div class="tile_container">
+              <div class="tile"><button class="button_1">PAD</button></div>
+              <div class="tile"><button class="button_1">PAD</button></div>
+              <div class="tile"><button class="button_1">PAD</button></div>
+              <div class="tile"><button class="button_1">PAD</button></div>
+              <div class="tile"><button class="button_1">PAD</button></div>
+              <div class="tile"><button class="button_1">PAD</button></div>
+              <div class="tile"><button class="button_1">PAD</button></div>
+              <div class="tile"><button class="button_1">PAD</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col w_ratio5per21 center">
+        <!-- MIXER -->
+        <div class="row h_ratio9per10">
+          <div class="col w_ratio1per3">A CHANNEL
+            <!-- CHANNEL -->
+            <div class="row h_ratio1per9">
+              <button class="button_1">LOAD</button>
+            </div>
+            <div class="row h_ratio1per9">TRIM/GAIN
+              <input class="fader" type="range" min="0" max="127" step="1" value="64">
+            </div>
+            <div class="row h_ratio1per3">
+              <!-- EQ -->
+              <div class="row h_ratio1per3">HI
+                <input class="fader" type="range" min="0" max="127" step="1" value="64">
+              </div>
+              <div class="row h_ratio1per3">MID
+                <input class="fader" type="range" min="0" max="127" step="1" value="64">
+              </div>
+              <div class="row h_ratio1per3">LO
+                <input class="fader" type="range" min="0" max="127" step="1" value="64">
+              </div>
+            </div>
+            <div class="row h_ratio1per9">
+              <!-- <button class="button_1">MONITOR CUE</button> -->
+              <label for="monitor_a"><input type="checkbox" id="monitor_a">MONITOR CUE</label>
+            </div>
+            <div class="row h_ratio1per3">INPUT FADER
+              <input class="fader input range_virtical" type="range" orient="virtical" min="0" max="127" step="1" value="64">
+            </div>
+          </div>
+
+          <div class="col w_ratio1per3 util">
+            <div class="row h_ratio1per9">
+              <input id="browse" class="browse" type="file" multiple>
+              <button class="button_1" onclick="document.getElementById('browse').click();">BROWSE</button>
+            </div>
+            <div class="row h_ratio2per9">
+              <select class="filelist" size="5">
+                <option>Track 1</option>
+                <option>Track 2</option>
+                <option>Track 3</option>
+                <option>Track 4</option>
+                <option>Track 5</option>
+                <option>Track 6</option>
+                <option>Track 7</option>
+              </select>
+            </div>
+            <div class="row h_ratio1per3">MASTER VOL
+              <input class="fader volume range_virtical" type="range" orient="virtical" min="0" max="127" step="1" value="64">
+            </div>
+            <div class="row h_ratio1per3">MONITOR VOL
+              <input class="fader volume range_virtical" type="range" orient="virtical" min="0" max="127" step="1" value="64">
+            </div>
+          </div>
+
+          <div class="col w_ratio1per3">B CHANNEL
+            <!-- CHANNEL -->
+            <div class="row h_ratio1per9">
+              <button class="button_1">LOAD</button>
+            </div>
+            <div class="row h_ratio1per9">TRIM/GAIN
+              <input class="fader" type="range" min="0" max="127" step="1" value="64">
+            </div>
+            <div class="row h_ratio1per3">
+              <!-- EQ -->
+              <div class="row h_ratio1per3">HI
+                <input class="fader" type="range" min="0" max="127" step="1" value="64">
+              </div>
+              <div class="row h_ratio1per3">MID
+                <input class="fader" type="range" min="0" max="127" step="1" value="64">
+              </div>
+              <div class="row h_ratio1per3">LO
+                <input class="fader" type="range" min="0" max="127" step="1" value="64">
+              </div>
+            </div>
+            <div class="row h_ratio1per9">
+              <!-- <button class="button_1">MONITOR CUE</button> -->
+              <label for="monitor_b"><input type="checkbox" id="monitor_b">MONITOR CUE</label>
+            </div>
+            <div class="row h_ratio1per3">INPUT FADER
+              <input class="fader input range_virtical" type="range" orient="virtical" min="0" max="127" step="1" value="64">
+            </div>
+          </div>
+        </div>
+        <div class="row h_ratio1per10 mixerbottom">CROSS FADER
+          <!-- CROSS FADER -->
+          <div>
+            <input class="fader" type="range" min="0" max="127" step="1" value="64">
+          </div>
+        </div>
+      </div>
+      <div class="col w_ratio8per21 side">
+        <!-- B SIDE -->
+        <div class="row h_ratio8per13">B TURNTABLE
+          <!-- TURNTABLE -->
+          <div class="row h_ratio3per13">
+            <div class="col w_ratio1per2">AUDIO PLAYER
+              <!-- AUDIO PLAYER -->
+              <audio controls></audio>
+            </div>
+            <div class="col w_ratio1per2">PITCH FADER
+              <!-- PITCHFADER -->
+              <input class="fader" type="range" min="0" max="127" step="1" value="64">
+            </div>
+          </div>
+        </div>
+        <div class="row h_ratio5per13 controller">
+          <!-- CONTROLLERS -->
+          <div class="col w_ratio3per13">CUE&PLAY
+            <!-- CUE&PLAY -->
+            <div class="row h_ratio1per3">
+              <button class="button_1">CUE</button>
+            </div>
+            <div class="row h_ratio1per3">
+              <button class="button_1">PLAY</button>
+            </div>
+          </div>
+          <div class="col w_ratio10per13">PARFORMANS PAD
+            <!-- PARFORMANSPAD -->
+            <div class="tile_container">
+              <div class="tile"><button class="button_1">PAD</button></div>
+              <div class="tile"><button class="button_1">PAD</button></div>
+              <div class="tile"><button class="button_1">PAD</button></div>
+              <div class="tile"><button class="button_1">PAD</button></div>
+              <div class="tile"><button class="button_1">PAD</button></div>
+              <div class="tile"><button class="button_1">PAD</button></div>
+              <div class="tile"><button class="button_1">PAD</button></div>
+              <div class="tile"><button class="button_1">PAD</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="js/main.js"></script>
+  </body>
+</html>

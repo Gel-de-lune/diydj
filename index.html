@@ -44,7 +44,7 @@
               <button class="button_1">CUE</button>
             </div>
             <div class="row h_ratio1per3">
-              <button class="button_1">PLAY</button>
+              <button id="play_a_btn" class="button_1">PLAY</button>
             </div>
           </div>
           <div class="col w_ratio10per13">PARFORMANS PAD
@@ -68,7 +68,7 @@
           <div class="col w_ratio1per3">A CHANNEL
             <!-- CHANNEL -->
             <div class="row h_ratio1per9">
-              <button class="button_1">LOAD</button>
+              <button id="load_a_btn" class="button_1">LOAD</button>
             </div>
             <div class="row h_ratio1per9">TRIM/GAIN
               <input class="fader" type="range" min="0" max="127" step="1" value="64">
@@ -100,14 +100,7 @@
               <button class="button_1" onclick="document.getElementById('browse').click();">BROWSE</button>
             </div>
             <div class="row h_ratio2per9">
-              <select class="filelist" size="5">
-                <option>Track 1</option>
-                <option>Track 2</option>
-                <option>Track 3</option>
-                <option>Track 4</option>
-                <option>Track 5</option>
-                <option>Track 6</option>
-                <option>Track 7</option>
+              <select id="filelist" class="filelist" size="5">
               </select>
             </div>
             <div class="row h_ratio1per3">MASTER VOL
@@ -121,7 +114,7 @@
           <div class="col w_ratio1per3">B CHANNEL
             <!-- CHANNEL -->
             <div class="row h_ratio1per9">
-              <button class="button_1">LOAD</button>
+              <button id="load_b_btn" class="button_1">LOAD</button>
             </div>
             <div class="row h_ratio1per9">TRIM/GAIN
               <input class="fader" type="range" min="0" max="127" step="1" value="64">
@@ -177,7 +170,7 @@
               <button class="button_1">CUE</button>
             </div>
             <div class="row h_ratio1per3">
-              <button class="button_1">PLAY</button>
+              <button id="play_b_btn" class="button_1">PLAY</button>
             </div>
           </div>
           <div class="col w_ratio10per13">PARFORMANS PAD

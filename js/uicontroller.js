@@ -6,6 +6,9 @@ class UiController {
     this.filelist = document.getElementById("filelist");
     // On change Browse
     this.browse.addEventListener("change", (event) => {
+      // Create Audio Context
+      this.audioprocess.createAudioContext();
+
       // Append files into Filelist
       for(let f of event.target.files) {
         let op = document.createElement("option");

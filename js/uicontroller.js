@@ -7,7 +7,9 @@ class UiController {
     // On change Browse
     this.browse.addEventListener("change", (event) => {
       // Create Audio Context
-      this.audioprocess.createAudioContext();
+      if(this.audioprocess.ctx === undefined) {
+        this.audioprocess.createAudioContext();
+      }
 
       // Append files into Filelist
       for(let f of event.target.files) {

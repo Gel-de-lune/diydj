@@ -76,10 +76,12 @@ class UiController {
     this.btn_b_pad8 = document.getElementsByTagName("button")[24];
 
 
-    // Cross Fader
+    // Cross fader
     this.fader_cross.addEventListener("change", (event) => { this.audioprocess.onCrossFader(event.target.value); });
-    // Master Volume
+    // Master volume
     this.volume_master.addEventListener("change", (event) => { this.audioprocess.onMasterVolume(event.target.value); });
+    // Monitor volume
+    this.volume_monitor.addEventListener("change", (event) => { this.audioprocess.onMonitorVolume(event.target.value); });
 
     // A audio
     this.a_audio = document.getElementsByTagName("audio")[0];
@@ -99,6 +101,8 @@ class UiController {
     this.eq_a_mid.addEventListener("change", (event) => { this.audioprocess.onEqualizerAMiddle(event.target.value); });
     // Equalizer A low
     this.eq_a_lo.addEventListener("change", (event) => { this.audioprocess.onEqualizerALow(event.target.value); });
+    // A monitor cue
+    this.chkbox_a_monitor.addEventListener("change", (event) => { this.audioprocess.onChangeAMonitorCue(event.target.checked); });
     // Play A button
     this.btn_a_play.addEventListener("click", (event) =>{ this.onClickAPlay(event); });
 
@@ -120,6 +124,8 @@ class UiController {
     this.eq_b_mid.addEventListener("change", (event) => { this.audioprocess.onEqualizerBMiddle(event.target.value); });
     // Equalizer B low
     this.eq_b_lo.addEventListener("change", (event) => { this.audioprocess.onEqualizerBLow(event.target.value); });
+    // B monitor cue
+    this.chkbox_b_monitor.addEventListener("change", (event) => { this.audioprocess.onChangeBMonitorCue(event.target.checked); });
     // Play B button
     this.btn_b_play.addEventListener("click", (event) =>{ this.onClickBPlay(event); });
   }

@@ -61,6 +61,10 @@ body {
   background: #222;
 }
 
+.util .clock{
+  text-align: center;
+}
+
 .button_1,.filelist {
   height: 100%;
   width: 100%;

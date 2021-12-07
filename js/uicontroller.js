@@ -1,5 +1,7 @@
 class UiController {
   constructor() {
+    // Clock
+    this.animationFrameClock();
     // Browse input(type:file)
     this.browse = document.getElementById("browse");
     // Filelist select
@@ -141,6 +143,19 @@ class UiController {
 
   audioprocess;
   midicontroller;
+
+  animationFrameClock() {
+    let m = 60;
+    let f = () => {
+      let d = new Date();
+      if(m !== d.getMinutes()) {
+        document.getElementById("clock").innerText = d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+        m = d.getMinutes();
+      }
+      window.requestAnimationFrame(f);
+    };
+    window.requestAnimationFrame(f);
+  }
 
   onLoadADeck(event) {
     const reader = new FileReader();

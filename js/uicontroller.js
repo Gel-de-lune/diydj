@@ -101,6 +101,10 @@ class UiController {
     this.eq_a_lo.addEventListener("change", (event) => { this.audioprocess.onEqualizerALow(event.target.value); });
     // Play A button
     this.btn_a_play.addEventListener("click", (event) =>{ this.onClickAPlay(event); });
+    // Mouse down A cue
+    this.btn_a_cue.addEventListener("mousedown", (event) =>{ this.onMouseDownACue(event); });
+    // Mouse up A cue
+    this.btn_a_cue.addEventListener("mouseup", (event) =>{ this.onMouseUpACue(event); });
 
     // B audio
     this.b_audio = document.getElementsByTagName("audio")[1];
@@ -122,6 +126,11 @@ class UiController {
     this.eq_b_lo.addEventListener("change", (event) => { this.audioprocess.onEqualizerBLow(event.target.value); });
     // Play B button
     this.btn_b_play.addEventListener("click", (event) =>{ this.onClickBPlay(event); });
+    // Mouse down B cue
+    this.btn_b_cue.addEventListener("mousedown", (event) =>{ this.onMouseDownBCue(event); });
+    // Mouse up B cue
+    this.btn_b_cue.addEventListener("mouseup", (event) =>{ this.onMouseUpBCue(event); });
+
   }
 
   audioprocess;
@@ -134,6 +143,8 @@ class UiController {
       this.a_audio.src = event.target.result;
       // Keep set pitch
       this.onFaderAPitch(this.fader_a_pitch.value);
+      // Set A cue point to 0
+      this.point_a_cue = 0;
     }
     reader.readAsDataURL(this.filelist.options[this.filelist.selectedIndex].file);
   }
@@ -150,6 +161,8 @@ class UiController {
       this.b_audio.src = event.target.result;
       // Keep set pitch
       this.onFaderBPitch(this.fader_b_pitch.value);
+      // Set B cue point to 0
+      this.point_b_cue = 0;
     }
     reader.readAsDataURL(this.filelist.options[this.filelist.selectedIndex].file);
   }
@@ -168,12 +181,54 @@ class UiController {
     }
   }
 
+  onMouseDownACue() {
+    if(this.a_audio.paused) {
+      // Set A cue point to current time
+      this.point_a_cue = this.a_audio.currentTime;
+      // Play the audio
+      this.a_audio.play();
+    } else if(this.a_audio.played) {
+      // Back to the cue point
+      this.a_audio.currentTime = this.point_a_cue;
+    }
+  }
+
+  onMouseUpACue() {
+    if(this.a_audio.played) {
+      // Pause the audio
+      this.a_audio.pause();
+      // Back to the cue point
+      this.a_audio.currentTime = this.point_a_cue;
+    }
+  }
+
   onClickBPlay() {
     // Toggle play and pause
     if(this.b_audio.paused) {
       this.b_audio.play();
     } else if(this.b_audio.played) {
       this.b_audio.pause();
+    }
+  }
+
+  onMouseDownBCue() {
+    if(this.b_audio.paused) {
+      // Set B cue point to current time
+      this.point_b_cue = this.b_audio.currentTime;
+      // Play the audio
+      this.b_audio.play();
+    } else if(this.b_audio.played) {
+      // Back to the cue point
+      this.b_audio.currentTime = this.point_b_cue;
+    }
+  }
+
+  onMouseUpBCue() {
+    if(this.b_audio.played) {
+      // Pause the audio
+      this.b_audio.pause();
+      // Back to the cue point
+      this.b_audio.currentTime = this.point_b_cue;
     }
   }
 }

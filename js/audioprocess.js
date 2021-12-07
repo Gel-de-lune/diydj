@@ -36,13 +36,13 @@ class AudioProcess {
 
     // Connect audio route
     this.a_mediaElementSourceNode.connect(this.a_gain)
-    .connect(this.fader_a_input)
     .connect(this.eq_a_hi)
     .connect(this.eq_a_mid)
     .connect(this.eq_a_lo)
-    .connect(this.monitor_volume);
+    // .connect(this.monitor_volume);
 
-    this.eq_a_lo.connect(this.fader_a_cross)
+    this.eq_a_lo.connect(this.fader_a_input)
+    .connect(this.fader_a_cross)
     .connect(this.master_volume);
 
     // B audio
@@ -51,8 +51,6 @@ class AudioProcess {
     this.b_mediaElementSourceNode = this.ctx.createMediaElementSource(b_audio);
     // B gain/trim
     this.b_gain = this.ctx.createGain();
-    // Fader B input
-    this.fader_b_input = this.ctx.createGain();
     // Equalizer B high 
     this.eq_b_hi = this.ctx.createBiquadFilter();
     this.eq_b_hi.type = "highshelf";
@@ -66,23 +64,62 @@ class AudioProcess {
     this.eq_b_lo = this.ctx.createBiquadFilter();
     this.eq_b_lo.type = "lowshelf";
     this.eq_b_lo.frequency.value = 500;   // 500Hz
+    // Fader B input
+    this.fader_b_input = this.ctx.createGain();
     // Fader B cross
     this.fader_b_cross = this.ctx.createGain();
     this.fader_b_cross.gain.value = Math.cos(0.5*0.5*Math.PI);  // Initial value
 
     // Connect audio route
     this.b_mediaElementSourceNode.connect(this.b_gain)
-    .connect(this.fader_b_input)
     .connect(this.eq_b_hi)
     .connect(this.eq_b_mid)
     .connect(this.eq_b_lo)
-    .connect(this.monitor_volume);
+    // .connect(this.monitor_volume);
 
-    this.eq_b_lo.connect(this.fader_b_cross)
+    this.eq_b_lo.connect(this.fader_b_input)
+    .connect(this.fader_b_cross)
     .connect(this.master_volume);
 
-    // connect master to destination
-    this.master_volume.connect(this.ctx.destination);
+    // Master and monitor audio routing
+    this.splitter_monitor = this.ctx.createChannelSplitter(2);
+    this.splitter_master = this.ctx.createChannelSplitter(2);
+    if(this.ctx.destination.maxChannelCount === 2) {
+      // In case 2ch
+      const monitor_merger = this.ctx.createChannelMerger(2);
+      // Connect A audio to left ch
+      const splitter_a = this.ctx.createChannelSplitter(2);
+      this.eq_a_lo.connect(splitter_a);
+      splitter_a.connect(monitor_merger, 0, 0);
+      // Connect B audio to right ch
+      const splitter_b = this.ctx.createChannelSplitter(2);
+      this.eq_b_lo.connect(splitter_b);
+      splitter_b.connect(monitor_merger, 1, 1);
+      // Connect monitor merger to monitor
+      monitor_merger.connect(this.monitor_volume);
+
+      this.merger = this.ctx.createChannelMerger(2);
+      // Don't connect monitor to stereo(0,1) ch until monitor cue checkbox is checked
+      this.monitor_volume.connect(this.splitter_monitor);
+      // Connect master to stereo(0,1) ch
+      this.master_volume.connect(this.splitter_master);
+      this.splitter_master.connect(this.merger, 0, 0);
+      this.splitter_master.connect(this.merger, 1, 1);
+    } else if(this.ctx.destination.maxChannelCount === 4) {
+      // In case 4ch
+      this.ctx.destination.channelCount = 4;
+
+      this.merger = this.ctx.createChannelMerger(4);
+      // Connect master to front(0,1) ch
+      this.master_volume.connect(this.splitter_master);
+      this.splitter_master.connect(this.merger, 0, 0);
+      this.splitter_master.connect(this.merger, 1, 1);
+      // Connect monitor to rear(2,3) ch
+      this.monitor_volume.connect(this.splitter_monitor);
+      this.splitter_monitor.connect(this.merger, 0, 2);
+      this.splitter_monitor.connect(this.merger, 1, 3);
+    }
+    this.merger.connect(this.ctx.destination);
   }
 
   onCrossFader(value) {
@@ -110,6 +147,32 @@ class AudioProcess {
     this.eq_a_lo.gain.value = (value / 64 - 1) * 40;
   }
 
+  onChangeAMonitorCue(checked) {
+    if(this.ctx.destination.maxChannelCount === 2) {
+      // In case 2ch
+      if(checked) {
+        // Disconnect master left ch from stereo left ch
+        this.splitter_master.disconnect(this.merger, 0, 0);
+        // Connect monitor left ch to stereo left ch
+        this.splitter_monitor.connect(this.merger, 0, 0);
+      } else {
+        // Disconnect monitor left ch from stereo left ch
+        this.splitter_monitor.disconnect(this.merger, 0, 0);
+        // Connect master left ch to stereo left ch
+        this.splitter_master.connect(this.merger, 0, 0);
+      }
+    } else if(this.ctx.destination.maxChannelCount === 4) {
+      // In case 4ch
+      if(checked) {
+        // Connect A audio to monitor
+        this.eq_a_lo.connect(this.monitor_volume);
+      } else {
+        // Disconnect A audio from monitor
+        this.eq_a_lo.disconnect(this.monitor_volume);
+      }
+    }
+  }
+
   onBGain(value) {
     this.b_gain.gain.value = value * 3.4 / 127;
   }
@@ -130,7 +193,37 @@ class AudioProcess {
     this.eq_b_lo.gain.value = (value / 64 - 1) * 40;
   }
 
+  onChangeBMonitorCue(checked) {
+    if(this.ctx.destination.maxChannelCount === 2) {
+      // In case 2ch
+      if(checked) {
+        // Disconnect master right ch from stereo right ch
+        this.splitter_master.disconnect(this.merger, 1, 1);
+        // Connect monitor right ch to stereo right ch
+        this.splitter_monitor.connect(this.merger, 1, 1);
+      } else {
+        // Disconnect monitor right ch from stereo right ch
+        this.splitter_monitor.disconnect(this.merger, 1, 1);
+        // Connect master right ch to stereo right ch
+        this.splitter_master.connect(this.merger, 1, 1);
+      }
+    } else if(this.ctx.destination.maxChannelCount === 4) {
+      // In case 4ch
+      if(checked) {
+        // Connect B audio to monitor
+        this.eq_b_lo.connect(this.monitor_volume);
+      } else {
+        // Disconnect B audio from monitor
+        this.eq_b_lo.disconnect(this.monitor_volume);
+      }
+    }
+  }
+
   onMasterVolume(value) {
     this.master_volume.gain.value = value / 127;
+  }
+
+  onMonitorVolume(value) {
+    this.monitor_volume.gain.value = value / 127;
   }
 }

@@ -157,6 +157,19 @@ class UiController {
     window.requestAnimationFrame(f);
   }
 
+  onMoveFileList(value) {
+    if(value === 0x01) {
+      // Right rotate
+      this.filelist.selectedIndex++;
+      if(0 > this.filelist.selectedIndex) this.filelist.selectedIndex = 0;
+    }
+    else if(value === 0x7F) {
+      // Left rotate
+      this.filelist.selectedIndex--;
+      if(0 > this.filelist.selectedIndex) this.filelist.selectedIndex = this.filelist.length - 1;
+    }
+  }
+
   onLoadADeck(event) {
     const reader = new FileReader();
     reader.onload = (event) => {

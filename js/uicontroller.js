@@ -24,58 +24,62 @@ class UiController {
       this.filelist.value = event.target.files[0].name;
     });
     // Input
-    this.fader_a_pitch = document.getElementsByTagName("input")[0];
-    this.radio_a_pitch_ratio_8 = document.getElementsByTagName("input")[1];
-    this.radio_a_pitch_ratio_16 = document.getElementsByTagName("input")[2];
-    this.radio_a_pitch_ratio_32 = document.getElementsByTagName("input")[3];
-    this.radio_a_pitch_ratio_64 = document.getElementsByTagName("input")[4];
-    this.a_gain = document.getElementsByTagName("input")[5];
-    this.eq_a_hi = document.getElementsByTagName("input")[6];
-    this.eq_a_mid = document.getElementsByTagName("input")[7];
-    this.eq_a_lo = document.getElementsByTagName("input")[8];
-    this.chkbox_a_monitor = document.getElementsByTagName("input")[9];
-    this.fader_a_input = document.getElementsByTagName("input")[10];
-    this.file_browse = document.getElementsByTagName("input")[11];
-    this.volume_master = document.getElementsByTagName("input")[12];
-    this.volume_monitor = document.getElementsByTagName("input")[13];
-    this.b_gain = document.getElementsByTagName("input")[14];
-    this.eq_b_hi = document.getElementsByTagName("input")[15];
-    this.eq_b_mid = document.getElementsByTagName("input")[16];
-    this.eq_b_lo = document.getElementsByTagName("input")[17];
-    this.chkbox_b_monitor = document.getElementsByTagName("input")[18];
-    this.fader_b_input = document.getElementsByTagName("input")[19];
-    this.fader_cross = document.getElementsByTagName("input")[20];
-    this.fader_b_pitch = document.getElementsByTagName("input")[21];
-    this.radio_b_pitch_ratio_8 = document.getElementsByTagName("input")[22];
-    this.radio_b_pitch_ratio_16 = document.getElementsByTagName("input")[23];
-    this.radio_b_pitch_ratio_32 = document.getElementsByTagName("input")[24];
-    this.radio_b_pitch_ratio_64 = document.getElementsByTagName("input")[25];
+    let index = 0;
+    this.fader_a_pitch = document.getElementsByTagName("input")[index++];
+    this.radio_a_pitch_ratio_8 = document.getElementsByTagName("input")[index++];
+    this.radio_a_pitch_ratio_16 = document.getElementsByTagName("input")[index++];
+    this.radio_a_pitch_ratio_32 = document.getElementsByTagName("input")[index++];
+    this.radio_a_pitch_ratio_64 = document.getElementsByTagName("input")[index++];
+    this.a_gain = document.getElementsByTagName("input")[index++];
+    this.eq_a_hi = document.getElementsByTagName("input")[index++];
+    this.eq_a_mid = document.getElementsByTagName("input")[index++];
+    this.eq_a_lo = document.getElementsByTagName("input")[index++];
+    this.chkbox_a_monitor = document.getElementsByTagName("input")[index++];
+    this.a_filter = document.getElementsByTagName("input")[index++];
+    this.fader_a_input = document.getElementsByTagName("input")[index++];
+    this.file_browse = document.getElementsByTagName("input")[index++];
+    this.volume_master = document.getElementsByTagName("input")[index++];
+    this.volume_monitor = document.getElementsByTagName("input")[index++];
+    this.b_gain = document.getElementsByTagName("input")[index++];
+    this.eq_b_hi = document.getElementsByTagName("input")[index++];
+    this.eq_b_mid = document.getElementsByTagName("input")[index++];
+    this.eq_b_lo = document.getElementsByTagName("input")[index++];
+    this.chkbox_b_monitor = document.getElementsByTagName("input")[index++];
+    this.b_filter = document.getElementsByTagName("input")[index++];
+    this.fader_b_input = document.getElementsByTagName("input")[index++];
+    this.fader_cross = document.getElementsByTagName("input")[index++];
+    this.fader_b_pitch = document.getElementsByTagName("input")[index++];
+    this.radio_b_pitch_ratio_8 = document.getElementsByTagName("input")[index++];
+    this.radio_b_pitch_ratio_16 = document.getElementsByTagName("input")[index++];
+    this.radio_b_pitch_ratio_32 = document.getElementsByTagName("input")[index++];
+    this.radio_b_pitch_ratio_64 = document.getElementsByTagName("input")[index++];
     // Button
-    this.btn_a_reset = document.getElementsByTagName("button")[0];
-    this.btn_a_cue = document.getElementsByTagName("button")[1];
-    this.btn_a_play = document.getElementsByTagName("button")[2];
-    this.btn_a_pad1 = document.getElementsByTagName("button")[3];
-    this.btn_a_pad2 = document.getElementsByTagName("button")[4];
-    this.btn_a_pad3 = document.getElementsByTagName("button")[5];
-    this.btn_a_pad4 = document.getElementsByTagName("button")[6];
-    this.btn_a_pad5 = document.getElementsByTagName("button")[7];
-    this.btn_a_pad6 = document.getElementsByTagName("button")[8];
-    this.btn_a_pad7 = document.getElementsByTagName("button")[9];
-    this.btn_a_pad8 = document.getElementsByTagName("button")[10];
-    this.btn_a_load = document.getElementsByTagName("button")[11];
-    this.btn_file_browse = document.getElementsByTagName("button")[12];
-    this.btn_b_load = document.getElementsByTagName("button")[13];
-    this.btn_b_reset = document.getElementsByTagName("button")[14];
-    this.btn_b_cue = document.getElementsByTagName("button")[15];
-    this.btn_b_play = document.getElementsByTagName("button")[16];
-    this.btn_b_pad1 = document.getElementsByTagName("button")[17];
-    this.btn_b_pad2 = document.getElementsByTagName("button")[18];
-    this.btn_b_pad3 = document.getElementsByTagName("button")[19];
-    this.btn_b_pad4 = document.getElementsByTagName("button")[20];
-    this.btn_b_pad5 = document.getElementsByTagName("button")[21];
-    this.btn_b_pad6 = document.getElementsByTagName("button")[22];
-    this.btn_b_pad7 = document.getElementsByTagName("button")[23];
-    this.btn_b_pad8 = document.getElementsByTagName("button")[24];
+    index = 0;
+    this.btn_a_reset = document.getElementsByTagName("button")[index++];
+    this.btn_a_cue = document.getElementsByTagName("button")[index++];
+    this.btn_a_play = document.getElementsByTagName("button")[index++];
+    this.btn_a_pad1 = document.getElementsByTagName("button")[index++];
+    this.btn_a_pad2 = document.getElementsByTagName("button")[index++];
+    this.btn_a_pad3 = document.getElementsByTagName("button")[index++];
+    this.btn_a_pad4 = document.getElementsByTagName("button")[index++];
+    this.btn_a_pad5 = document.getElementsByTagName("button")[index++];
+    this.btn_a_pad6 = document.getElementsByTagName("button")[index++];
+    this.btn_a_pad7 = document.getElementsByTagName("button")[index++];
+    this.btn_a_pad8 = document.getElementsByTagName("button")[index++];
+    this.btn_a_load = document.getElementsByTagName("button")[index++];
+    this.btn_file_browse = document.getElementsByTagName("button")[index++];
+    this.btn_b_load = document.getElementsByTagName("button")[index++];
+    this.btn_b_reset = document.getElementsByTagName("button")[index++];
+    this.btn_b_cue = document.getElementsByTagName("button")[index++];
+    this.btn_b_play = document.getElementsByTagName("button")[index++];
+    this.btn_b_pad1 = document.getElementsByTagName("button")[index++];
+    this.btn_b_pad2 = document.getElementsByTagName("button")[index++];
+    this.btn_b_pad3 = document.getElementsByTagName("button")[index++];
+    this.btn_b_pad4 = document.getElementsByTagName("button")[index++];
+    this.btn_b_pad5 = document.getElementsByTagName("button")[index++];
+    this.btn_b_pad6 = document.getElementsByTagName("button")[index++];
+    this.btn_b_pad7 = document.getElementsByTagName("button")[index++];
+    this.btn_b_pad8 = document.getElementsByTagName("button")[index++];
 
 
     // Cross fader
@@ -105,6 +109,8 @@ class UiController {
     this.eq_a_lo.addEventListener("change", (event) => { this.audioprocess.onEqualizerALow(event.target.value); });
     // A monitor cue
     this.chkbox_a_monitor.addEventListener("change", (event) => { this.audioprocess.onChangeAMonitorCue(event.target.checked); });
+    // A filter
+    this.a_filter.addEventListener("change", (event) => { this.onAFilter(event.target.value); });
     // Play A button
     this.btn_a_play.addEventListener("click", (event) =>{ this.onClickAPlay(event); });
     // Mouse down A cue
@@ -132,6 +138,8 @@ class UiController {
     this.eq_b_lo.addEventListener("change", (event) => { this.audioprocess.onEqualizerBLow(event.target.value); });
     // B monitor cue
     this.chkbox_b_monitor.addEventListener("change", (event) => { this.audioprocess.onChangeBMonitorCue(event.target.checked); });
+    // B filter
+    this.b_filter.addEventListener("change", (event) => { this.onBFilter(event.target.value); });
     // Play B button
     this.btn_b_play.addEventListener("click", (event) =>{ this.onClickBPlay(event); });
     // Mouse down B cue
@@ -188,6 +196,16 @@ class UiController {
     this.a_audio.playbackRate = 1.0 + (value - 64) / (6400 / ratio);
   }
 
+  onAFilter(value) {
+    // In case value is 64, execute lowpass and highpass both
+    if(value <= 64) {
+      this.audioprocess.onFilterALowpass((64 - value)*2);
+    }
+    if(64 <= value) {
+      this.audioprocess.onFilterAHighpass((value - 64)*2);
+    }
+  }
+
   onLoadBDeck(event) {
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -204,6 +222,16 @@ class UiController {
   onFaderBPitch(value) {
     const ratio = Number(document.querySelector('input[name="pitch_b_ratio"]:checked').value);
     this.b_audio.playbackRate = 1.0 + (value - 64) / (6400 / ratio);
+  }
+
+  onBFilter(value) {
+    // In case value is 64, execute lowpass and highpass both
+    if(value <= 64) {
+      this.audioprocess.onFilterBLowpass((64 - value)*2);
+    }
+    if(64 <= value) {
+      this.audioprocess.onFilterBHighpass((value - 64)*2);
+    }
   }
 
   onClickAPlay() {

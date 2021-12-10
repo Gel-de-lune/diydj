@@ -28,6 +28,14 @@ class AudioProcess {
     this.eq_a_lo = this.ctx.createBiquadFilter();
     this.eq_a_lo.type = "lowshelf";
     this.eq_a_lo.frequency.value = 500;   // 500Hz
+    // Highpass filter
+    this.a_hpf = this.ctx.createBiquadFilter();
+    this.a_hpf.type = "highpass";
+    this.a_hpf.frequency.value = 0;
+    // Lowpass filter
+    this.a_lpf = this.ctx.createBiquadFilter();
+    this.a_lpf.type = "lowpass";
+    this.a_lpf.frequency.value = this.ctx.sampleRate / 2; // Nyquist frequency
     // Fader A input
     this.fader_a_input = this.ctx.createGain();
     // Fader A cross
@@ -41,7 +49,9 @@ class AudioProcess {
     .connect(this.eq_a_lo)
     // .connect(this.monitor_volume);
 
-    this.eq_a_lo.connect(this.fader_a_input)
+    this.eq_a_lo.connect(this.a_hpf)
+    .connect(this.a_lpf)
+    .connect(this.fader_a_input)
     .connect(this.fader_a_cross)
     .connect(this.master_volume);
 
@@ -64,6 +74,14 @@ class AudioProcess {
     this.eq_b_lo = this.ctx.createBiquadFilter();
     this.eq_b_lo.type = "lowshelf";
     this.eq_b_lo.frequency.value = 500;   // 500Hz
+    // Highpass filter
+    this.b_hpf = this.ctx.createBiquadFilter();
+    this.b_hpf.type = "highpass";
+    this.b_hpf.frequency.value = 0;
+    // Lowpass filter
+    this.b_lpf = this.ctx.createBiquadFilter();
+    this.b_lpf.type = "lowpass";
+    this.b_lpf.frequency.value = this.ctx.sampleRate / 2; // Nyquist frequency
     // Fader B input
     this.fader_b_input = this.ctx.createGain();
     // Fader B cross
@@ -77,7 +95,9 @@ class AudioProcess {
     .connect(this.eq_b_lo)
     // .connect(this.monitor_volume);
 
-    this.eq_b_lo.connect(this.fader_b_input)
+    this.eq_b_lo.connect(this.b_hpf)
+    .connect(this.b_lpf)
+    .connect(this.fader_b_input)
     .connect(this.fader_b_cross)
     .connect(this.master_volume);
 
@@ -147,6 +167,16 @@ class AudioProcess {
     this.eq_a_lo.gain.value = (value / 64 - 1) * 40;
   }
 
+  onFilterAHighpass(value) {
+    // 0 to Nyquist freq increase by 19/20 base exponent
+    this.a_hpf.frequency.value = (value === 0 ? 0 : (19/20) ** (127 - value)) * (this.ctx.sampleRate / 2);
+  }
+
+  onFilterALowpass(value) {
+    // Nyquist freq to 0 decrease by 19/20 base exponent
+    this.a_lpf.frequency.value = ((19/20) ** value) * (this.ctx.sampleRate / 2);
+  }
+
   onChangeAMonitorCue(checked) {
     if(this.ctx.destination.maxChannelCount === 2) {
       // In case 2ch
@@ -191,6 +221,16 @@ class AudioProcess {
 
   onEqualizerBLow(value) {
     this.eq_b_lo.gain.value = (value / 64 - 1) * 40;
+  }
+
+  onFilterBHighpass(value) {
+    // 0 to Nyquist freq increase by 19/20 base exponent
+    this.b_hpf.frequency.value = (value === 0 ? 0 :(19/20) ** (127 - value)) * (this.ctx.sampleRate / 2);
+  }
+
+  onFilterBLowpass(value) {
+    // Nyquist freq to 0 decrease by 19/20 base exponent
+    this.b_lpf.frequency.value = ((19/20) ** value) * (this.ctx.sampleRate / 2);
   }
 
   onChangeBMonitorCue(checked) {

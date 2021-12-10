@@ -36,7 +36,9 @@ class MidiController {
     "a_hi",
     "a_mid",
     "a_lo",
+    "a_filter",
     "a_touchwheel",
+    "a_temporange",
     "b_load",
     "b_monitorcue",
     "b_play",
@@ -47,7 +49,9 @@ class MidiController {
     "b_hi",
     "b_mid",
     "b_lo",
-    "b_touchwheel"
+    "b_filter",
+    "b_temporange",
+    "b_touchwheel",
   ];
 
   json = {
@@ -226,6 +230,7 @@ class MidiController {
     a_monitorcue: { status: 0x90, data1: 0x54, off: 0x00, on: 0x7F },
     a_sync: { status: 0x90, data1: 0x58, off: 0x00, on: 0x7F },
     a_shiftplay: { status: 0x90, data1: 0x5C, off: 0x00, on: 0x7F },
+    a_temporange: { status: 0x90, data1: 0x60, off: 0x00, on: 0x7F }, // with shift
     a_loopin: { status: 0x90, data1: 0x61, off: 0x00, on: 0x7F }, // with shift
     a_loopout: { status: 0x90, data1: 0x62, off: 0x00, on: 0x7F }, // with shift
     a_pitch: { status: 0xB0, data1: 0x00, min: 0x00, max: 0x7F }, // MSB
@@ -266,7 +271,7 @@ class MidiController {
 
     //B
     b_load: { status: 0x96, data1: 0x47, off: 0x00, on: 0x7F },
-    a_filter: { status: 0xB6, data1: 0x18, min: 0x00, max: 0x7F }, // MSB
+    b_filter: { status: 0xB6, data1: 0x18, min: 0x00, max: 0x7F }, // MSB
     // a_filter: { status: 0xB6, data1: 0x38, min: 0x00, max: 0x7F }, // LSB
     b_touchwheel_xy: { status: 0xB1, data1: 0x23, right: { slow: 0x41, midium: 0x42, fast: 0x43 }, left: { slow: 0x3F, midium: 0x3E, fast: 0x3D }},
     b_play: { status: 0x91, data1: 0x0B, off: 0x00, on: 0x7F },
@@ -283,6 +288,7 @@ class MidiController {
     b_monitorcue: { status: 0x91, data1: 0x54, off: 0x00, on: 0x7F },
     b_sync: { status: 0x91, data1: 0x58, off: 0x00, on: 0x7F },
     b_shiftplay: { status: 0x91, data1: 0x5C, off: 0x00, on: 0x7F },
+    b_temporange: { status: 0x91, data1: 0x60, off: 0x00, on: 0x7F }, // with shift
     b_loopin: { status: 0x91, data1: 0x61, off: 0x00, on: 0x7F }, // with shift
     b_loopout: { status: 0x91, data1: 0x62, off: 0x00, on: 0x7F }, // with shift
     b_pitch: { status: 0xB1, data1: 0x00, min: 0x00, max: 0x7F }, // MSB
@@ -427,6 +433,22 @@ class MidiController {
       this.uicontroller.eq_a_lo.value = event.data[2];
       this.audioprocess.onEqualizerALow(event.data[2]);
     }
+    else if(event.data[0] === feature.a_filter.status && event.data[1] === feature.a_filter.data1) {
+      // A filter
+      // In case event.data[2] is 64, execute lowpass and highpass both
+      if(event.data[2] <= 64) {
+        this.audioprocess.onFilterALowpass((64 - event.data[2])*2);
+      }
+      if(64 <= event.data[2]) {
+        this.audioprocess.onFilterAHighpass((event.data[2] - 64)*2);
+      }
+      this.uicontroller.a_filter.value = event.data[2];
+    }
+    else if(event.data[0] === feature.a_temporange.status && event.data[1] === feature.a_temporange.data1) {
+      // A tempo range
+      if(event.data[2] === feature.a_temporange.on)
+        this.uicontroller.onChangeATempoRange(event.data[2]);
+    }
     else if(event.data[0] === feature.a_touchwheel.status && event.data[1] === feature.a_touchwheel.data1) {
       // A touch wheel
       if(event.data[2] === feature.a_touchwheel.on) {
@@ -492,6 +514,22 @@ class MidiController {
       // B lo
       this.uicontroller.eq_b_lo.value = event.data[2];
       this.audioprocess.onEqualizerBLow(event.data[2]);
+    }
+    else if(event.data[0] === feature.b_filter.status && event.data[1] === feature.b_filter.data1) {
+      // B filter
+      // In case value is 64, execute lowpass and highpass both
+      if(event.data[2] <= 64) {
+        this.audioprocess.onFilterBLowpass((64 - event.data[2])*2);
+      }
+      if(64 <= event.data[2]) {
+        this.audioprocess.onFilterBHighpass((event.data[2] - 64)*2);
+      }
+      this.uicontroller.b_filter.value = event.data[2];
+    }
+    else if(event.data[0] === feature.b_temporange.status && event.data[1] === feature.b_temporange.data1) {
+      // B tempo range
+      if(event.data[2] === feature.b_temporange.on)
+        this.uicontroller.onChangeBTempoRange(event.data[2]);
     }
     else if(event.data[0] === feature.b_touchwheel.status && event.data[1] === feature.b_touchwheel.data1) {
       // B touch wheel

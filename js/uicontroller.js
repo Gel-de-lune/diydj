@@ -191,6 +191,24 @@ class UiController {
     reader.readAsDataURL(this.filelist.options[this.filelist.selectedIndex].file);
   }
 
+  onChangeATempoRange(value) {
+    switch(document.querySelector('input[name="pitch_a_ratio"]:checked')) {
+      case this.radio_a_pitch_ratio_8:
+        this.radio_a_pitch_ratio_16.checked = true;
+        break;
+      case this.radio_a_pitch_ratio_16:
+        this.radio_a_pitch_ratio_32.checked = true;
+        break;
+      case this.radio_a_pitch_ratio_32:
+        this.radio_a_pitch_ratio_64.checked = true;
+        break;
+      case this.radio_a_pitch_ratio_64:
+        this.radio_a_pitch_ratio_8.checked = true;
+        break;      
+    }
+    this.onFaderAPitch(this.fader_a_pitch.value);
+  }
+
   onFaderAPitch(value) {
     const ratio = Number(document.querySelector('input[name="pitch_a_ratio"]:checked').value);
     this.a_audio.playbackRate = 1.0 + (value - 64) / (6400 / ratio);
@@ -217,6 +235,24 @@ class UiController {
       this.point_b_cue = 0;
     }
     reader.readAsDataURL(this.filelist.options[this.filelist.selectedIndex].file);
+  }
+
+  onChangeBTempoRange(value) {
+    switch(document.querySelector('input[name="pitch_b_ratio"]:checked')) {
+      case this.radio_b_pitch_ratio_8:
+        this.radio_b_pitch_ratio_16.checked = true;
+        break;
+      case this.radio_b_pitch_ratio_16:
+        this.radio_b_pitch_ratio_32.checked = true;
+        break;
+      case this.radio_b_pitch_ratio_32:
+        this.radio_b_pitch_ratio_64.checked = true;
+        break;
+      case this.radio_b_pitch_ratio_64:
+        this.radio_b_pitch_ratio_8.checked = true;
+        break;      
+    }
+    this.onFaderBPitch(this.fader_b_pitch.value);
   }
 
   onFaderBPitch(value) {

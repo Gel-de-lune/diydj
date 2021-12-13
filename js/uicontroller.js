@@ -91,6 +91,8 @@ class UiController {
 
     // A audio
     this.a_audio = document.getElementsByTagName("audio")[0];
+    // A video
+    this.a_video = document.getElementsByTagName("video")[0];
     // Fader A pitch
     this.fader_a_pitch.addEventListener("change", (event) => { this.onFaderAPitch(event.target.value); });
     // Reset A pitch button
@@ -179,16 +181,30 @@ class UiController {
   }
 
   onLoadADeck(event) {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      // Set selected file to A audio source
-      this.a_audio.src = event.target.result;
-      // Keep set pitch
-      this.onFaderAPitch(this.fader_a_pitch.value);
-      // Set A cue point to 0
-      this.point_a_cue = 0;
+    // const reader = new FileReader();
+    // reader.onload = (event) => {
+    //   // Set selected file to A audio source
+    //   this.a_audio.src = event.target.result;
+    //   // Keep set pitch
+    //   this.onFaderAPitch(this.fader_a_pitch.value);
+    //   // Set A cue point to 0
+    //   this.point_a_cue = 0;
+    // }
+    // reader.readAsDataURL(this.filelist.options[this.filelist.selectedIndex].file);
+
+    console.log(this.filelist.options[this.filelist.selectedIndex].file.type);
+    if(this.filelist.options[this.filelist.selectedIndex].file.type == "video/mp4") {
+      let r = new FileReader();
+      r.onload = (event) => {
+        // Set selected file to A audio source
+        this.a_video.src = event.target.result;
+        // Keep set pitch
+        this.onFaderAPitch(this.fader_a_pitch.value);
+        // Set A cue point to 0
+        this.point_a_cue = 0;
+      }
+      r.readAsDataURL(this.filelist.options[this.filelist.selectedIndex].file);
     }
-    reader.readAsDataURL(this.filelist.options[this.filelist.selectedIndex].file);
   }
 
   onChangeATempoRange(value) {
@@ -211,7 +227,8 @@ class UiController {
 
   onFaderAPitch(value) {
     const ratio = Number(document.querySelector('input[name="pitch_a_ratio"]:checked').value);
-    this.a_audio.playbackRate = 1.0 + (value - 64) / (6400 / ratio);
+    if(this.a_audio.src) this.a_audio.playbackRate = 1.0 + (value - 64) / (6400 / ratio);
+    this.a_video.playbackRate = 1.0 + (value - 64) / (6400 / ratio);
   }
 
   onAFilter(value) {
@@ -272,10 +289,19 @@ class UiController {
 
   onClickAPlay() {
     // Toggle play and pause
-    if(this.a_audio.paused) {
-      this.a_audio.play();
-    } else if(this.a_audio.played) {
-      this.a_audio.pause();
+    if(this.a_audio.src) {
+      if(this.a_audio.paused) {
+        this.a_audio.play();
+      } else if(this.a_audio.played) {
+        this.a_audio.pause();
+      }
+    }
+    if(this.a_video.src) {
+      if(this.a_video.paused) {
+        this.a_video.play();
+      } else if(this.a_video.played) {
+        this.a_video.pause();
+      }
     }
   }
 

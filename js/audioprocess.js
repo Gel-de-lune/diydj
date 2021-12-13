@@ -11,8 +11,11 @@ class AudioProcess {
 
     // A audio
     const a_audio = document.getElementsByTagName("audio")[0];
+    // A video
+    const a_video = document.getElementsByTagName("video")[0];
     // A media element source node
     this.a_mediaElementSourceNode = this.ctx.createMediaElementSource(a_audio);
+    this.a_mediaElementSourceNode_video = this.ctx.createMediaElementSource(a_video);
     // A gain/trim
     this.a_gain = this.ctx.createGain();
     // Equalizer A high 
@@ -48,6 +51,7 @@ class AudioProcess {
     .connect(this.eq_a_mid)
     .connect(this.eq_a_lo)
     // .connect(this.monitor_volume);
+    this.a_mediaElementSourceNode_video.connect(this.a_gain);
 
     this.eq_a_lo.connect(this.a_hpf)
     .connect(this.a_lpf)

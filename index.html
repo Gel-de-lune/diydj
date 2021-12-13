@@ -33,6 +33,11 @@
             <div class="col w_ratio1per2">PITCH FADER
               <!-- PITCHFADER -->
               <input class="fader" type="range" min="0" max="127" step="1" value="64">
+              <input type="radio" name="pitch_a_ratio" value="8" checked><label for="8">±8%</label>
+              <input type="radio" name="pitch_a_ratio" value="16"><label for="16">±16%</label>
+              <input type="radio" name="pitch_a_ratio" value="32"><label for="32">±32%</label>
+              <input type="radio" name="pitch_a_ratio" value="64"><label for="64">±64%</label>
+              <button>RESET</button>
             </div>
           </div>
         </div>
@@ -67,13 +72,13 @@
         <div class="row h_ratio9per10">
           <div class="col w_ratio1per3">A CHANNEL
             <!-- CHANNEL -->
-            <div class="row h_ratio1per9">
+            <div class="row h_ratio1per10">
               <button class="button_1">LOAD</button>
             </div>
-            <div class="row h_ratio1per9">TRIM/GAIN
+            <div class="row h_ratio1per10">TRIM/GAIN
               <input class="fader" type="range" min="0" max="127" step="1" value="64">
             </div>
-            <div class="row h_ratio1per3">
+            <div class="row h_ratio3per10">
               <!-- EQ -->
               <div class="row h_ratio1per3">HI
                 <input class="fader" type="range" min="0" max="127" step="1" value="64">
@@ -85,29 +90,28 @@
                 <input class="fader" type="range" min="0" max="127" step="1" value="64">
               </div>
             </div>
-            <div class="row h_ratio1per9">
+            <div class="row h_ratio1per10">
               <!-- <button class="button_1">MONITOR CUE</button> -->
               <label for="monitor_a"><input type="checkbox" id="monitor_a">MONITOR CUE</label>
             </div>
-            <div class="row h_ratio1per3">INPUT FADER
+            <div class="row h_ratio1per10">LPF/HPF
+              <input class="fader" type="range" min="0" max="127" step="1" value="64">
+            </div>
+            <div class="row h_ratio3per10">INPUT FADER
               <input class="fader input range_virtical" type="range" orient="virtical" min="0" max="127" step="1" value="64">
             </div>
           </div>
 
           <div class="col w_ratio1per3 util">
+            <div class="row clock">
+              <span id="clock">99:99</span>
+            </div>
             <div class="row h_ratio1per9">
               <input id="browse" class="browse" type="file" multiple>
               <button class="button_1" onclick="document.getElementById('browse').click();">BROWSE</button>
             </div>
             <div class="row h_ratio2per9">
-              <select class="filelist" size="5">
-                <option>Track 1</option>
-                <option>Track 2</option>
-                <option>Track 3</option>
-                <option>Track 4</option>
-                <option>Track 5</option>
-                <option>Track 6</option>
-                <option>Track 7</option>
+              <select id="filelist" class="filelist" size="5">
               </select>
             </div>
             <div class="row h_ratio1per3">MASTER VOL
@@ -120,13 +124,13 @@
 
           <div class="col w_ratio1per3">B CHANNEL
             <!-- CHANNEL -->
-            <div class="row h_ratio1per9">
+            <div class="row h_ratio1per10">
               <button class="button_1">LOAD</button>
             </div>
-            <div class="row h_ratio1per9">TRIM/GAIN
+            <div class="row h_ratio1per10">TRIM/GAIN
               <input class="fader" type="range" min="0" max="127" step="1" value="64">
             </div>
-            <div class="row h_ratio1per3">
+            <div class="row h_ratio3per10">
               <!-- EQ -->
               <div class="row h_ratio1per3">HI
                 <input class="fader" type="range" min="0" max="127" step="1" value="64">
@@ -138,11 +142,14 @@
                 <input class="fader" type="range" min="0" max="127" step="1" value="64">
               </div>
             </div>
-            <div class="row h_ratio1per9">
+            <div class="row h_ratio1per10">
               <!-- <button class="button_1">MONITOR CUE</button> -->
               <label for="monitor_b"><input type="checkbox" id="monitor_b">MONITOR CUE</label>
             </div>
-            <div class="row h_ratio1per3">INPUT FADER
+            <div class="row h_ratio1per10">LPF/HPF
+              <input class="fader" type="range" min="0" max="127" step="1" value="64">
+            </div>
+            <div class="row h_ratio3per10">INPUT FADER
               <input class="fader input range_virtical" type="range" orient="virtical" min="0" max="127" step="1" value="64">
             </div>
           </div>
@@ -166,6 +173,11 @@
             <div class="col w_ratio1per2">PITCH FADER
               <!-- PITCHFADER -->
               <input class="fader" type="range" min="0" max="127" step="1" value="64">
+              <input type="radio" name="pitch_b_ratio" value="8" checked><label for="8">±8%</label>
+              <input type="radio" name="pitch_b_ratio" value="16"><label for="16">±16%</label>
+              <input type="radio" name="pitch_b_ratio" value="32"><label for="32">±32%</label>
+              <input type="radio" name="pitch_b_ratio" value="64"><label for="64">±64%</label>
+              <button>RESET</button>
             </div>
           </div>
         </div>
@@ -196,6 +208,9 @@
         </div>
       </div>
     </div>
+    <script src="js/audioprocess.js"></script>
+    <script src="js/midicontroller.js"></script>
+    <script src="js/uicontroller.js"></script>
     <script src="js/main.js"></script>
   </body>
 </html>

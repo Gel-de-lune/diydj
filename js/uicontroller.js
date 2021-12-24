@@ -23,6 +23,10 @@ class UiController {
       // Select the first file
       this.filelist.value = event.target.files[0].name;
     });
+    // Div
+    this.A = document.getElementsByTagName("div")[1];
+    this.B = document.getElementsByTagName("div")[50];
+
     // Input
     let index = 0;
     this.fader_a_pitch = document.getElementsByTagName("input")[index++];
@@ -89,6 +93,8 @@ class UiController {
     // Monitor volume
     this.volume_monitor.addEventListener("change", (event) => { this.audioprocess.onMonitorVolume(event.target.value); });
 
+    // A
+    this.A.addEventListener("wheel", (event) => { this.onWheelASearch(event.deltaY>0?0x41:0x3F); });
     // A audio
     this.a_audio = document.getElementsByTagName("audio")[0];
     // Fader A pitch
@@ -118,6 +124,8 @@ class UiController {
     // Mouse up A cue
     this.btn_a_cue.addEventListener("mouseup", (event) =>{ this.onMouseUpACue(event); });
 
+    // B
+    this.B.addEventListener("wheel", (event) => { this.onWheelBSearch(event.deltaY>0?0x41:0x3F); });
     // B audio
     this.b_audio = document.getElementsByTagName("audio")[1];
     // Fader B pitch
@@ -147,10 +155,61 @@ class UiController {
     // Mouse up B cue
     this.btn_b_cue.addEventListener("mouseup", (event) =>{ this.onMouseUpBCue(event); });
 
+    for(let item in this.json) {
+      if(this.json[item] === "browse") this.json[item] = { downfunction:(event) => { this.btn_file_browse.click(); }, upfunction:(event) => {  } };
+    }
+
+    document.onkeydown = (event) => {
+      // event.preventDefault();
+      if(this.key_buffer[event.code] !== true) {
+        this.key_buffer[event.code] = true;
+        console.log("onkeydown " + event.key + " " + event.code);
+        if(event.code in this.json) this.json[event.code].downfunction();
+      }
+    };
+    document.onkeyup = (event) => {
+      // event.preventDefault();
+      if(this.key_buffer[event.code] !== false) {
+        this.key_buffer[event.code] = false;
+        console.log("onkeyup " + event.key + " " + event.code);
+        if(event.code in this.json) this.json[event.code].upfunction();
+      }
+    }
+    
+    document.onwheel = (event) => {
+      // event.preventDefault();
+    };
   }
 
   audioprocess;
   midicontroller;
+
+  key_buffer = {};
+  json = {
+    KeyA:{ downfunction:(event) => { this.onMouseDownACue(); }, upfunction:(event) => { this.onMouseUpACue(); } }, // A Cue
+    KeyB:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD A8
+    KeyC:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD A6
+    KeyD:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD A2
+    KeyF:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD A3
+    KeyG:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD A4
+    KeyH:{ downfunction:(event) => { this.onMouseDownBCue(); }, upfunction:(event) => { this.onMouseUpBCue(); } }, // B Cue
+    KeyJ:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD B1
+    KeyK:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD B2
+    KeyL:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD B3
+    KeyM:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD B5
+    KeyN:{ downfunction:(event) => { this.onClickBPlay(); }, upfunction:(event) => {  } }, // B Play
+    KeyW:"browse",
+    KeyS:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD A1
+    KeyV:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD A7
+    KeyX:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD A5
+    KeyZ:{ downfunction:(event) => { this.onClickAPlay(); }, upfunction:(event) => {  } }, // A Play
+    Semicolon:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD B4
+    Comma:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD B6
+    Period:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD B7
+    Slash:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD B8
+    Digit1:{ downfunction:(event) => { this.onLoadADeck(); }, upfunction:(event) => {  } }, // A Load
+    Digit2:{ downfunction:(event) => { this.onLoadBDeck(); }, upfunction:(event) => {  } }, // B Load
+  };
 
   animationFrameClock() {
     let m = 60;
@@ -193,31 +252,19 @@ class UiController {
     }
   }
 
-  onLoadBDeck(event) {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      // Set selected file to B audio source
-      this.b_audio.src = event.target.result;
-      // Keep set pitch
-      this.onFaderBPitch(this.fader_b_pitch.value);
-      // Set B cue point to 0
-      this.point_b_cue = 0;
-    }
-    reader.readAsDataURL(this.filelist.options[this.filelist.selectedIndex].file);
-  }
-
-  onFaderBPitch(value) {
-    const ratio = Number(document.querySelector('input[name="pitch_b_ratio"]:checked').value);
-    this.b_audio.playbackRate = 1.0 + (value - 64) / (6400 / ratio);
-  }
-
-  onBFilter(value) {
-    // In case value is 64, execute lowpass and highpass both
-    if(value <= 64) {
-      this.audioprocess.onFilterBLowpass((64 - value)*2);
-    }
-    if(64 <= value) {
-      this.audioprocess.onFilterBHighpass((value - 64)*2);
+  onWheelASearch(value) {
+    if(0x01<=value && value<=0x20) {
+      // 01->20
+      this.a_audio.currentTime+=((value - 0x00)/3);
+    } else if(0x7F>=value && value>=0x61) {
+      // 7F->61
+      this.a_audio.currentTime-=((0x80 - value)/3);
+    } else if(0x41<=value && value<=0x60) {
+      // 41->60
+      this.a_audio.currentTime+=((value - 0x40)/3);
+    } else if(0x3F>=value && value>=0x21) {
+      // 3F->21
+      this.a_audio.currentTime-=((0x40 - value)/3);
     }
   }
 
@@ -248,6 +295,50 @@ class UiController {
       this.a_audio.pause();
       // Back to the cue point
       this.a_audio.currentTime = this.point_a_cue;
+    }
+  }
+
+  onLoadBDeck(event) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      // Set selected file to B audio source
+      this.b_audio.src = event.target.result;
+      // Keep set pitch
+      this.onFaderBPitch(this.fader_b_pitch.value);
+      // Set B cue point to 0
+      this.point_b_cue = 0;
+    }
+    reader.readAsDataURL(this.filelist.options[this.filelist.selectedIndex].file);
+  }
+
+  onFaderBPitch(value) {
+    const ratio = Number(document.querySelector('input[name="pitch_b_ratio"]:checked').value);
+    this.b_audio.playbackRate = 1.0 + (value - 64) / (6400 / ratio);
+  }
+
+  onBFilter(value) {
+    // In case value is 64, execute lowpass and highpass both
+    if(value <= 64) {
+      this.audioprocess.onFilterBLowpass((64 - value)*2);
+    }
+    if(64 <= value) {
+      this.audioprocess.onFilterBHighpass((value - 64)*2);
+    }
+  }
+
+  onWheelBSearch(value) {
+    if(0x01<=value && value<=0x20) {
+      // 01->20
+      this.b_audio.currentTime+=((value - 0x00)/3);
+    } else if(0x7F>=value && value>=0x61) {
+      // 7F->61
+      this.b_audio.currentTime-=((0x80 - value)/3);
+    } else if(0x41<=value && value<=0x60) {
+      // 41->60
+      this.b_audio.currentTime+=((value - 0x40)/3);
+    } else if(0x3F>=value && value>=0x21) {
+      // 3F->21
+      this.b_audio.currentTime-=((0x40 - value)/3);
     }
   }
 

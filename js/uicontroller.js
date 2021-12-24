@@ -130,6 +130,7 @@ class UiController {
     this.btn_a_pad6.addEventListener("mousedown", (event) => { this.onClickAPad(event); });
     this.btn_a_pad7.addEventListener("mousedown", (event) => { this.onClickAPad(event); });
     this.btn_a_pad8.addEventListener("mousedown", (event) => { this.onClickAPad(event); });
+    this.hotcue_a = [];
 
     // B audio
     this.b_audio = document.getElementsByTagName("audio")[1];
@@ -168,6 +169,7 @@ class UiController {
     this.btn_b_pad6.addEventListener("mousedown", (event) => { this.onClickBPad(event); });
     this.btn_b_pad7.addEventListener("mousedown", (event) => { this.onClickBPad(event); });
     this.btn_b_pad8.addEventListener("mousedown", (event) => { this.onClickBPad(event); });
+    this.hotcue_b = [];
   }
 
   audioprocess;
@@ -276,7 +278,18 @@ class UiController {
     let value = event.target.value;
     if(this.radio_a_hotcue.checked) {
       // HOT CUE
-
+      if(!event.shiftKey) {
+        if(this.hotcue_a[value]) {
+          // Return back target number time on A hot cue array
+          this.a_audio.currentTime = this.hotcue_a[value];
+        } else {
+          // Register current time to target number A hot cue array
+          this.hotcue_a[value] = this.a_audio.currentTime;
+        }
+      } else {
+        // Unregister target number time from A hot cue array
+        delete this.hotcue_a[value];
+      }
     } else if(this.radio_a_sampler.checked) {
       // SAMPLER
       if(!event.shiftKey) {
@@ -337,6 +350,18 @@ class UiController {
     let value = event.target.value;
     if(this.radio_b_hotcue.checked) {
       // HOT CUE
+      if(!event.shiftKey) {
+        if(this.hotcue_b[value]) {
+          // Return back target number time on B hot cue array
+          this.b_audio.currentTime = this.hotcue_b[value];
+        } else {
+          // Register current time to target number B hot cue array
+          this.hotcue_b[value] = this.b_audio.currentTime;
+        }
+      } else {
+        // Unregister target number time from B hot cue array
+        delete this.hotcue_b[value];
+      }
 
     } else if(this.radio_b_sampler.checked) {
       // SAMPLER

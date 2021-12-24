@@ -1,5 +1,9 @@
 class AudioProcess {
   constructor() {
+    // A sample array
+    this.sample_a = [];
+    // B sample array
+    this.sample_b = [];
   }
 
   createAudioContext() {
@@ -203,6 +207,21 @@ class AudioProcess {
     }
   }
 
+  onOneShotAPadSample(index) {
+    // Playback target index sample in sample_a array
+    let source_node = this.ctx.createBufferSource();
+    source_node.buffer = this.sample_a[index];
+    source_node.connect(this.ctx.destination);
+    source_node.start(0);
+  }
+
+  onRegisterAPadSample(arrayBuffer, index) {
+    // Register target index sample to sample_a array
+    this.ctx.decodeAudioData(arrayBuffer)
+    .then((buffer) => { this.sample_a[index] = buffer; })
+    .catch((message) => { console.log(message); });
+  }
+
   onBGain(value) {
     this.b_gain.gain.value = value * 3.4 / 127;
   }
@@ -257,6 +276,21 @@ class AudioProcess {
         this.eq_b_lo.disconnect(this.monitor_volume);
       }
     }
+  }
+
+  onOneShotBPadSample(index) {
+    // Playback target index sample in sample_b array
+    let source_node = this.ctx.createBufferSource();
+    source_node.buffer = this.sample_b[index];
+    source_node.connect(this.ctx.destination);
+    source_node.start(0);
+  }
+
+  onRegisterBPadSample(arrayBuffer, index) {
+    // Register target index sample to sample_b array
+    this.ctx.decodeAudioData(arrayBuffer)
+    .then((buffer) => { this.sample_b[index] = buffer; })
+    .catch((message) => { console.log(message); });
   }
 
   onMasterVolume(value) {

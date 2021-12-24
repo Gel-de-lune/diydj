@@ -2,31 +2,8 @@ class UiController {
   constructor() {
     // Clock
     this.animationFrameClock();
-    // Browse input(type:file)
-    this.browse = document.getElementById("browse");
     // Filelist select
     this.filelist = document.getElementById("filelist");
-    // On change Browse
-    this.browse.addEventListener("change", (event) => {
-      // Create Audio Context
-      if(this.audioprocess.ctx === undefined) {
-        this.audioprocess.createAudioContext();
-      }
-
-      // Append files into Filelist
-      for(let f of event.target.files) {
-        let op = document.createElement("option");
-        op.innerText = f.name;
-        op.file = f;
-        this.filelist.appendChild(op);
-      }
-      // Select the first file
-      this.filelist.value = event.target.files[0].name;
-    });
-    // Div
-    this.A = document.getElementsByTagName("div")[1];
-    this.B = document.getElementsByTagName("div")[50];
-
     // Input
     let index = 0;
     this.fader_a_pitch = document.getElementsByTagName("input")[index++];
@@ -34,6 +11,8 @@ class UiController {
     this.radio_a_pitch_ratio_16 = document.getElementsByTagName("input")[index++];
     this.radio_a_pitch_ratio_32 = document.getElementsByTagName("input")[index++];
     this.radio_a_pitch_ratio_64 = document.getElementsByTagName("input")[index++];
+    this.radio_a_hotcue = document.getElementsByTagName("input")[index++];
+    this.radio_a_sampler = document.getElementsByTagName("input")[index++];
     this.a_gain = document.getElementsByTagName("input")[index++];
     this.eq_a_hi = document.getElementsByTagName("input")[index++];
     this.eq_a_mid = document.getElementsByTagName("input")[index++];
@@ -41,7 +20,6 @@ class UiController {
     this.chkbox_a_monitor = document.getElementsByTagName("input")[index++];
     this.a_filter = document.getElementsByTagName("input")[index++];
     this.fader_a_input = document.getElementsByTagName("input")[index++];
-    this.file_browse = document.getElementsByTagName("input")[index++];
     this.volume_master = document.getElementsByTagName("input")[index++];
     this.volume_monitor = document.getElementsByTagName("input")[index++];
     this.b_gain = document.getElementsByTagName("input")[index++];
@@ -57,6 +35,8 @@ class UiController {
     this.radio_b_pitch_ratio_16 = document.getElementsByTagName("input")[index++];
     this.radio_b_pitch_ratio_32 = document.getElementsByTagName("input")[index++];
     this.radio_b_pitch_ratio_64 = document.getElementsByTagName("input")[index++];
+    this.radio_b_hotcue = document.getElementsByTagName("input")[index++];
+    this.radio_b_sampler = document.getElementsByTagName("input")[index++];
     // Button
     index = 0;
     this.btn_a_reset = document.getElementsByTagName("button")[index++];
@@ -85,6 +65,8 @@ class UiController {
     this.btn_b_pad7 = document.getElementsByTagName("button")[index++];
     this.btn_b_pad8 = document.getElementsByTagName("button")[index++];
 
+    // On Browse button click
+    this.btn_file_browse.addEventListener("click", (event) => { this.onClickBrowseButton(event); });
 
     // Cross fader
     this.fader_cross.addEventListener("change", (event) => { this.audioprocess.onCrossFader(event.target.value); });
@@ -123,6 +105,16 @@ class UiController {
     this.btn_a_cue.addEventListener("mousedown", (event) =>{ this.onMouseDownACue(event); });
     // Mouse up A cue
     this.btn_a_cue.addEventListener("mouseup", (event) =>{ this.onMouseUpACue(event); });
+    // A PERFORMANCE PAD
+    this.btn_a_pad1.addEventListener("mousedown", (event) => { this.onClickAPad(event); });
+    this.btn_a_pad2.addEventListener("mousedown", (event) => { this.onClickAPad(event); });
+    this.btn_a_pad3.addEventListener("mousedown", (event) => { this.onClickAPad(event); });
+    this.btn_a_pad4.addEventListener("mousedown", (event) => { this.onClickAPad(event); });
+    this.btn_a_pad5.addEventListener("mousedown", (event) => { this.onClickAPad(event); });
+    this.btn_a_pad6.addEventListener("mousedown", (event) => { this.onClickAPad(event); });
+    this.btn_a_pad7.addEventListener("mousedown", (event) => { this.onClickAPad(event); });
+    this.btn_a_pad8.addEventListener("mousedown", (event) => { this.onClickAPad(event); });
+    this.hotcue_a = [];
 
     // B
     this.B.addEventListener("wheel", (event) => { this.onWheelBSearch(event.deltaY>0?0x41:0x3F); });
@@ -154,6 +146,16 @@ class UiController {
     this.btn_b_cue.addEventListener("mousedown", (event) =>{ this.onMouseDownBCue(event); });
     // Mouse up B cue
     this.btn_b_cue.addEventListener("mouseup", (event) =>{ this.onMouseUpBCue(event); });
+    // B PERFORMANCE PAD
+    this.btn_b_pad1.addEventListener("mousedown", (event) => { this.onClickBPad(event); });
+    this.btn_b_pad2.addEventListener("mousedown", (event) => { this.onClickBPad(event); });
+    this.btn_b_pad3.addEventListener("mousedown", (event) => { this.onClickBPad(event); });
+    this.btn_b_pad4.addEventListener("mousedown", (event) => { this.onClickBPad(event); });
+    this.btn_b_pad5.addEventListener("mousedown", (event) => { this.onClickBPad(event); });
+    this.btn_b_pad6.addEventListener("mousedown", (event) => { this.onClickBPad(event); });
+    this.btn_b_pad7.addEventListener("mousedown", (event) => { this.onClickBPad(event); });
+    this.btn_b_pad8.addEventListener("mousedown", (event) => { this.onClickBPad(event); });
+    this.hotcue_b = [];
 
     for(let item in this.json) {
       if(this.json[item] === "browse") this.json[item] = { downfunction:(event) => { this.btn_file_browse.click(); }, upfunction:(event) => {  } };
@@ -222,6 +224,29 @@ class UiController {
       window.requestAnimationFrame(f);
     };
     window.requestAnimationFrame(f);
+  }
+
+  onClickBrowseButton(event) {
+    let input = document.createElement("input");
+    input.type = "file";
+    input.multiple = true;
+    input.addEventListener("change", (event) => { this.onSelectAudioFiles(event); });
+    input.click();
+  }
+
+  onSelectAudioFiles(event) {
+    // Create Audio Context
+    if(this.audioprocess.ctx === undefined) this.audioprocess.createAudioContext();
+
+    // Append files into Filelist
+    for(let f of event.target.files) {
+      let op = document.createElement("option");
+      op.innerText = f.name;
+      op.file = f;
+      this.filelist.appendChild(op);
+    }
+    // Select the first file
+    this.filelist.value = event.target.files[0].name;
   }
 
   onLoadADeck(event) {
@@ -342,6 +367,50 @@ class UiController {
     }
   }
 
+  onClickAPad(event) {
+    let value = event.target.value;
+    if(this.radio_a_hotcue.checked) {
+      // HOT CUE
+      if(!event.shiftKey) {
+        if(this.hotcue_a[value]) {
+          // Return back target number time on A hot cue array
+          this.a_audio.currentTime = this.hotcue_a[value];
+        } else {
+          // Register current time to target number A hot cue array
+          this.hotcue_a[value] = this.a_audio.currentTime;
+        }
+      } else {
+        // Unregister target number time from A hot cue array
+        delete this.hotcue_a[value];
+      }
+    } else if(this.radio_a_sampler.checked) {
+      // SAMPLER
+      // Create Audio Context
+      if(this.audioprocess.ctx === undefined) this.audioprocess.createAudioContext();
+      if(!event.shiftKey) {
+        if(this.audioprocess.sample_a[value]) {
+          // Play target number sample on A PAD
+          this.audioprocess.onOneShotAPadSample(value);
+        } else {
+          // Register sample to target number A PAD
+          let input = document.createElement("input");
+          input.type = "file";
+          input.addEventListener("change", (event) => {
+            let fileReader = new FileReader();
+            fileReader.addEventListener("load", (event) => {
+              this.audioprocess.onRegisterAPadSample(event.target.result, value);
+            });
+            fileReader.readAsArrayBuffer(event.target.files[0]);
+          });
+          input.click();
+        }
+      } else {
+        // Unregister target number sample from A PAD
+        delete this.audioprocess.sample_a[value];
+      }
+    }
+  }
+
   onClickBPlay() {
     // Toggle play and pause
     if(this.b_audio.paused) {
@@ -369,6 +438,51 @@ class UiController {
       this.b_audio.pause();
       // Back to the cue point
       this.b_audio.currentTime = this.point_b_cue;
+    }
+  }
+
+  onClickBPad(event) {
+    let value = event.target.value;
+    if(this.radio_b_hotcue.checked) {
+      // HOT CUE
+      if(!event.shiftKey) {
+        if(this.hotcue_b[value]) {
+          // Return back target number time on B hot cue array
+          this.b_audio.currentTime = this.hotcue_b[value];
+        } else {
+          // Register current time to target number B hot cue array
+          this.hotcue_b[value] = this.b_audio.currentTime;
+        }
+      } else {
+        // Unregister target number time from B hot cue array
+        delete this.hotcue_b[value];
+      }
+
+    } else if(this.radio_b_sampler.checked) {
+      // SAMPLER
+      // Create Audio Context
+      if(this.audioprocess.ctx === undefined) this.audioprocess.createAudioContext();
+      if(!event.shiftKey) {
+        if(this.audioprocess.sample_b[value]) {
+          // Play target number sample on B PAD
+          this.audioprocess.onOneShotBPadSample(value);
+        } else {
+          // Register sample to target number B PAD
+          let input = document.createElement("input");
+          input.type = "file";
+          input.addEventListener("change", (event) => {
+            let fileReader = new FileReader();
+            fileReader.addEventListener("load", (event) => {
+              this.audioprocess.onRegisterBPadSample(event.target.result, value);
+            });
+            fileReader.readAsArrayBuffer(event.target.files[0]);
+          });
+          input.click();
+        }
+      } else {
+        // Unregister target number sample from B PAD
+        delete this.audioprocess.sample_b[value];
+      }
     }
   }
 }

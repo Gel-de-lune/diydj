@@ -2,27 +2,8 @@ class UiController {
   constructor() {
     // Clock
     this.animationFrameClock();
-    // Browse input(type:file)
-    this.browse = document.getElementById("browse");
     // Filelist select
     this.filelist = document.getElementById("filelist");
-    // On change Browse
-    this.browse.addEventListener("change", (event) => {
-      // Create Audio Context
-      if(this.audioprocess.ctx === undefined) {
-        this.audioprocess.createAudioContext();
-      }
-
-      // Append files into Filelist
-      for(let f of event.target.files) {
-        let op = document.createElement("option");
-        op.innerText = f.name;
-        op.file = f;
-        this.filelist.appendChild(op);
-      }
-      // Select the first file
-      this.filelist.value = event.target.files[0].name;
-    });
     // Input
     let index = 0;
     this.fader_a_pitch = document.getElementsByTagName("input")[index++];
@@ -39,7 +20,6 @@ class UiController {
     this.chkbox_a_monitor = document.getElementsByTagName("input")[index++];
     this.a_filter = document.getElementsByTagName("input")[index++];
     this.fader_a_input = document.getElementsByTagName("input")[index++];
-    this.file_browse = document.getElementsByTagName("input")[index++];
     this.volume_master = document.getElementsByTagName("input")[index++];
     this.volume_monitor = document.getElementsByTagName("input")[index++];
     this.b_gain = document.getElementsByTagName("input")[index++];
@@ -85,6 +65,8 @@ class UiController {
     this.btn_b_pad7 = document.getElementsByTagName("button")[index++];
     this.btn_b_pad8 = document.getElementsByTagName("button")[index++];
 
+    // On Browse button click
+    this.btn_file_browse.addEventListener("click", (event) => { this.onClickBrowseButton(event); });
 
     // Cross fader
     this.fader_cross.addEventListener("change", (event) => { this.audioprocess.onCrossFader(event.target.value); });
@@ -186,6 +168,29 @@ class UiController {
       window.requestAnimationFrame(f);
     };
     window.requestAnimationFrame(f);
+  }
+
+  onClickBrowseButton(event) {
+    let input = document.createElement("input");
+    input.type = "file";
+    input.multiple = true;
+    input.addEventListener("change", (event) => { this.onSelectAudioFiles(event); });
+    input.click();
+  }
+
+  onSelectAudioFiles(event) {
+    // Create Audio Context
+    if(this.audioprocess.ctx === undefined) this.audioprocess.createAudioContext();
+
+    // Append files into Filelist
+    for(let f of event.target.files) {
+      let op = document.createElement("option");
+      op.innerText = f.name;
+      op.file = f;
+      this.filelist.appendChild(op);
+    }
+    // Select the first file
+    this.filelist.value = event.target.files[0].name;
   }
 
   onLoadADeck(event) {
@@ -292,6 +297,8 @@ class UiController {
       }
     } else if(this.radio_a_sampler.checked) {
       // SAMPLER
+      // Create Audio Context
+      if(this.audioprocess.ctx === undefined) this.audioprocess.createAudioContext();
       if(!event.shiftKey) {
         if(this.audioprocess.sample_a[value]) {
           // Play target number sample on A PAD
@@ -365,6 +372,8 @@ class UiController {
 
     } else if(this.radio_b_sampler.checked) {
       // SAMPLER
+      // Create Audio Context
+      if(this.audioprocess.ctx === undefined) this.audioprocess.createAudioContext();
       if(!event.shiftKey) {
         if(this.audioprocess.sample_b[value]) {
           // Play target number sample on B PAD

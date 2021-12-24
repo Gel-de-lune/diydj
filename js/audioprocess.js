@@ -1,5 +1,9 @@
 class AudioProcess {
   constructor() {
+    // A sample array
+    this.sample_a = [];
+    // B sample array
+    this.sample_b = [];
   }
 
   createAudioContext() {
@@ -13,8 +17,6 @@ class AudioProcess {
     const a_audio = document.getElementsByTagName("audio")[0];
     // A media element source node
     this.a_mediaElementSourceNode = this.ctx.createMediaElementSource(a_audio);
-    // A sample array
-    this.sample_a = [];
     // A gain/trim
     this.a_gain = this.ctx.createGain();
     // Equalizer A high 
@@ -61,8 +63,6 @@ class AudioProcess {
     const b_audio = document.getElementsByTagName("audio")[1];
     // B media element source node
     this.b_mediaElementSourceNode = this.ctx.createMediaElementSource(b_audio);
-    // B sample array
-    this.sample_b = [];
     // B gain/trim
     this.b_gain = this.ctx.createGain();
     // Equalizer B high 

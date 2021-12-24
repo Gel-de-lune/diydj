@@ -93,7 +93,3 @@ body {
 .input,.volume {
   height: 75%;
 }
-
-input.browse {
-  display: none;
-}

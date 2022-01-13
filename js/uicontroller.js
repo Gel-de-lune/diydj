@@ -99,6 +99,8 @@ class UiController {
     this.a_filter.addEventListener("change", (event) => { this.onAFilter(event.target.value); });
     // Play A button
     this.btn_a_play.addEventListener("click", (event) =>{ this.onClickAPlay(event); });
+    // Context menu A cue
+    this.btn_a_cue.addEventListener("contextmenu", (event) => { event.preventDefault(); });
     // Mouse down A cue
     this.btn_a_cue.addEventListener("mousedown", (event) =>{ this.onMouseDownACue(event); });
     // Mouse up A cue
@@ -138,6 +140,8 @@ class UiController {
     this.b_filter.addEventListener("change", (event) => { this.onBFilter(event.target.value); });
     // Play B button
     this.btn_b_play.addEventListener("click", (event) =>{ this.onClickBPlay(event); });
+    // Context menu B cue
+    this.btn_b_cue.addEventListener("contextmenu", (event) => { event.preventDefault(); });
     // Mouse down B cue
     this.btn_b_cue.addEventListener("mousedown", (event) =>{ this.onMouseDownBCue(event); });
     // Mouse up B cue
@@ -195,25 +199,20 @@ class UiController {
   }
 
   onLoadADeck(event) {
-    // Read as data url
-    const reader_data_url = new FileReader();
-    reader_data_url.addEventListener("load", (event) => {
-      // Set selected file to A audio source
-      this.a_audio.src = event.target.result;
-      // Keep set pitch
-      this.onFaderAPitch(this.fader_a_pitch.value);
-      // Set A cue point to 0
-      this.point_a_cue = 0;
-    });
-    reader_data_url.readAsDataURL(this.filelist.options[this.filelist.selectedIndex].file);
+    // Set selected file object URL to A audio source
+    this.a_audio.src = URL.createObjectURL(this.filelist.options[this.filelist.selectedIndex].file);
+    // Keep set pitch
+    this.onFaderAPitch(this.fader_a_pitch.value);
+    // Set A cue point to 0
+    this.point_a_cue = 0;
 
     // Read as array buffer
-    const reader_array_buffer = new FileReader();
-    reader_array_buffer.addEventListener("load", (event) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", (event) => {
       // Register audio buffer in audio process
       this.audioprocess.onLoadAArrayBuffer(event.target.result);
     });
-    reader_array_buffer.readAsArrayBuffer(this.filelist.options[this.filelist.selectedIndex].file);
+    reader.readAsArrayBuffer(this.filelist.options[this.filelist.selectedIndex].file);
   }
 
   onFaderAPitch(value) {
@@ -262,25 +261,20 @@ class UiController {
   }
 
   onLoadBDeck(event) {
-    // Read as data url
-    const reader_data_url = new FileReader();
-    reader_data_url.onload = (event) => {
-      // Set selected file to B audio source
-      this.b_audio.src = event.target.result;
-      // Keep set pitch
-      this.onFaderBPitch(this.fader_b_pitch.value);
-      // Set B cue point to 0
-      this.point_b_cue = 0;
-    }
-    reader_data_url.readAsDataURL(this.filelist.options[this.filelist.selectedIndex].file);
+    // Set selected file object URL to B audio source
+    this.b_audio.src = URL.createObjectURL(this.filelist.options[this.filelist.selectedIndex].file);
+    // Keep set pitch
+    this.onFaderBPitch(this.fader_b_pitch.value);
+    // Set B cue point to 0
+    this.point_b_cue = 0;
 
     // Read as array buffer
-    const reader_array_buffer = new FileReader();
-    reader_array_buffer.addEventListener("load", (event) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", (event) => {
       // Register audio buffer in audio process
       this.audioprocess.onLoadBArrayBuffer(event.target.result);
     });
-    reader_array_buffer.readAsArrayBuffer(this.filelist.options[this.filelist.selectedIndex].file);
+    reader.readAsArrayBuffer(this.filelist.options[this.filelist.selectedIndex].file);
   }
 
   onFaderBPitch(value) {

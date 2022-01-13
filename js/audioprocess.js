@@ -4,6 +4,12 @@ class AudioProcess {
     this.sample_a = [];
     // B sample array
     this.sample_b = [];
+    // A audio buffer
+    this.audio_a_buffer_forward_order;
+    this.audio_a_buffer_reverse_order;
+    // B audio buffer
+    this.audio_b_buffer_forward_order;
+    this.audio_b_buffer_reverse_order;
   }
 
   createAudioContext() {
@@ -29,9 +35,9 @@ class AudioProcess {
     this.eq_a_mid.frequency.value = 1000; // 1kHz
     this.eq_a_mid.Q.value = Math.SQRT1_2;
     // Equalizer A low
-    this.eq_a_lo = this.ctx.createBiquadFilter();
-    this.eq_a_lo.type = "lowshelf";
-    this.eq_a_lo.frequency.value = 500;   // 500Hz
+    this.eq_a_low = this.ctx.createBiquadFilter();
+    this.eq_a_low.type = "lowshelf";
+    this.eq_a_low.frequency.value = 500;   // 500Hz
     // Highpass filter
     this.a_hpf = this.ctx.createBiquadFilter();
     this.a_hpf.type = "highpass";
@@ -50,10 +56,10 @@ class AudioProcess {
     this.a_mediaElementSourceNode.connect(this.a_gain)
     .connect(this.eq_a_hi)
     .connect(this.eq_a_mid)
-    .connect(this.eq_a_lo)
+    .connect(this.eq_a_low)
     // .connect(this.monitor_volume);
 
-    this.eq_a_lo.connect(this.a_hpf)
+    this.eq_a_low.connect(this.a_hpf)
     .connect(this.a_lpf)
     .connect(this.fader_a_input)
     .connect(this.fader_a_cross)
@@ -75,9 +81,9 @@ class AudioProcess {
     this.eq_b_mid.frequency.value = 1000; // 1kHz
     this.eq_b_mid.Q.value = Math.SQRT1_2;
     // Equalizer B low
-    this.eq_b_lo = this.ctx.createBiquadFilter();
-    this.eq_b_lo.type = "lowshelf";
-    this.eq_b_lo.frequency.value = 500;   // 500Hz
+    this.eq_b_low = this.ctx.createBiquadFilter();
+    this.eq_b_low.type = "lowshelf";
+    this.eq_b_low.frequency.value = 500;   // 500Hz
     // Highpass filter
     this.b_hpf = this.ctx.createBiquadFilter();
     this.b_hpf.type = "highpass";
@@ -96,10 +102,10 @@ class AudioProcess {
     this.b_mediaElementSourceNode.connect(this.b_gain)
     .connect(this.eq_b_hi)
     .connect(this.eq_b_mid)
-    .connect(this.eq_b_lo)
+    .connect(this.eq_b_low)
     // .connect(this.monitor_volume);
 
-    this.eq_b_lo.connect(this.b_hpf)
+    this.eq_b_low.connect(this.b_hpf)
     .connect(this.b_lpf)
     .connect(this.fader_b_input)
     .connect(this.fader_b_cross)
@@ -113,11 +119,11 @@ class AudioProcess {
       const monitor_merger = this.ctx.createChannelMerger(2);
       // Connect A audio to left ch
       const splitter_a = this.ctx.createChannelSplitter(2);
-      this.eq_a_lo.connect(splitter_a);
+      this.eq_a_low.connect(splitter_a);
       splitter_a.connect(monitor_merger, 0, 0);
       // Connect B audio to right ch
       const splitter_b = this.ctx.createChannelSplitter(2);
-      this.eq_b_lo.connect(splitter_b);
+      this.eq_b_low.connect(splitter_b);
       splitter_b.connect(monitor_merger, 1, 1);
       // Connect monitor merger to monitor
       monitor_merger.connect(this.monitor_volume);
@@ -168,7 +174,7 @@ class AudioProcess {
   }
 
   onEqualizerALow(value) {
-    this.eq_a_lo.gain.value = (value / 64 - 1) * 40;
+    this.eq_a_low.gain.value = (value / 64 - 1) * 40;
   }
 
   onFilterAHighpass(value) {
@@ -199,12 +205,31 @@ class AudioProcess {
       // In case 4ch
       if(checked) {
         // Connect A audio to monitor
-        this.eq_a_lo.connect(this.monitor_volume);
+        this.eq_a_low.connect(this.monitor_volume);
       } else {
         // Disconnect A audio from monitor
-        this.eq_a_lo.disconnect(this.monitor_volume);
+        this.eq_a_low.disconnect(this.monitor_volume);
       }
     }
+  }
+
+  onLoadAArrayBuffer(arrayBuffer) {
+    // Register A audio buffer
+    this.ctx.decodeAudioData(arrayBuffer)
+    .then((buffer) => {
+      // Register forward order array buffer
+      this.audio_a_buffer_forward_order = buffer;
+      // Create reverse order array buffer
+      this.audio_a_buffer_reverse_order = this.ctx.createBuffer(buffer.numberOfChannels, buffer.length, buffer.sampleRate);
+      // Execute every channel
+      for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+        // Copy buffer to reverse order array buffer
+        buffer.copyFromChannel(this.audio_a_buffer_reverse_order.getChannelData(channel), channel);
+        // Reverse it
+        this.audio_a_buffer_reverse_order.getChannelData(channel).reverse();
+      }
+    })
+    .catch((message) => { console.log(message); });
   }
 
   onOneShotAPadSample(index) {
@@ -220,6 +245,40 @@ class AudioProcess {
     this.ctx.decodeAudioData(arrayBuffer)
     .then((buffer) => { this.sample_a[index] = buffer; })
     .catch((message) => { console.log(message); });
+  }
+
+  onSearchAForward(currentTime, duration, playbackRate) {
+    // Create duration size buffer
+    let buffer = this.ctx.createBuffer(this.audio_a_buffer_forward_order.numberOfChannels, Math.ceil(this.ctx.sampleRate * duration/1000), this.ctx.sampleRate);
+    // Execute every channel
+    for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+      // Copy audio buffer start from current time
+      this.audio_a_buffer_forward_order.copyFromChannel(buffer.getChannelData(channel), channel, Math.round(currentTime*this.ctx.sampleRate));
+    }
+    // Play audio buffer source
+    let node = this.ctx.createBufferSource();
+    node.buffer = buffer;
+    node.playbackRate.value = playbackRate;
+    node.connect(this.a_gain);
+    node.start(0);
+  }
+
+  onSearchABackward(currentTime, duration, playbackRate) {
+    // Create duration size buffer
+    let buffer = this.ctx.createBuffer(this.audio_a_buffer_reverse_order.numberOfChannels, Math.ceil(this.ctx.sampleRate * duration/1000), this.ctx.sampleRate);
+    // Calculate current time from end of audio
+    let calculatedTime = this.audio_a_buffer_reverse_order.duration - currentTime;
+    // Execute every channel
+    for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+      // Copy audio buffer start from calculated time
+      this.audio_a_buffer_reverse_order.copyFromChannel(buffer.getChannelData(channel), channel, Math.round(calculatedTime*this.ctx.sampleRate));
+    }
+    // Play audio buffer source
+    let node = this.ctx.createBufferSource();
+    node.buffer = buffer;
+    node.playbackRate.value = playbackRate;
+    node.connect(this.a_gain);
+    node.start(0);
   }
 
   onBGain(value) {
@@ -239,7 +298,7 @@ class AudioProcess {
   }
 
   onEqualizerBLow(value) {
-    this.eq_b_lo.gain.value = (value / 64 - 1) * 40;
+    this.eq_b_low.gain.value = (value / 64 - 1) * 40;
   }
 
   onFilterBHighpass(value) {
@@ -270,12 +329,31 @@ class AudioProcess {
       // In case 4ch
       if(checked) {
         // Connect B audio to monitor
-        this.eq_b_lo.connect(this.monitor_volume);
+        this.eq_b_low.connect(this.monitor_volume);
       } else {
         // Disconnect B audio from monitor
-        this.eq_b_lo.disconnect(this.monitor_volume);
+        this.eq_b_low.disconnect(this.monitor_volume);
       }
     }
+  }
+
+  onLoadBArrayBuffer(arrayBuffer) {
+    // Register B audio buffer
+    this.ctx.decodeAudioData(arrayBuffer)
+    .then((buffer) => {
+      // Register forward order array buffer
+      this.audio_b_buffer_forward_order = buffer;
+      // Create reverse order array buffer
+      this.audio_b_buffer_reverse_order = this.ctx.createBuffer(buffer.numberOfChannels, buffer.length, buffer.sampleRate);
+      // Execute every channel
+      for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+        // Copy buffer to reverse order array buffer
+        buffer.copyFromChannel(this.audio_b_buffer_reverse_order.getChannelData(channel), channel);
+        // Reverse it
+        this.audio_b_buffer_reverse_order.getChannelData(channel).reverse();
+      }
+    })
+    .catch((message) => { console.log(message); });
   }
 
   onOneShotBPadSample(index) {
@@ -291,6 +369,40 @@ class AudioProcess {
     this.ctx.decodeAudioData(arrayBuffer)
     .then((buffer) => { this.sample_b[index] = buffer; })
     .catch((message) => { console.log(message); });
+  }
+
+  onSearchBForward(currentTime, duration, playbackRate) {
+    // Create duration size buffer
+    let buffer = this.ctx.createBuffer(this.audio_b_buffer_forward_order.numberOfChannels, Math.ceil(this.ctx.sampleRate * duration/1000), this.ctx.sampleRate);
+    // Execute every channel
+    for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+      // Copy audio buffer start from current time
+      this.audio_b_buffer_forward_order.copyFromChannel(buffer.getChannelData(channel), channel, Math.round(currentTime*this.ctx.sampleRate));
+    }
+    // Play audio buffer source
+    let node = this.ctx.createBufferSource();
+    node.buffer = buffer;
+    node.playbackRate.value = playbackRate;
+    node.connect(this.ctx.destination);
+    node.start(0);
+  }
+
+  onSearchBBackward(currentTime, duration, playbackRate) {
+    // Create duration size buffer
+    let buffer = this.ctx.createBuffer(2, Math.ceil(this.ctx.sampleRate * duration/1000), this.ctx.sampleRate);
+    // Calculate current time from end of audio
+    let calculatedTime = this.audio_b_buffer_reverse_order.duration - currentTime;
+    // Execute every channel
+    for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+      // Copy audio buffer start from calculated time
+      this.audio_b_buffer_reverse_order.copyFromChannel(buffer.getChannelData(channel), channel, Math.round(calculatedTime*this.ctx.sampleRate));
+    }
+    // Play audio buffer source
+    let node = this.ctx.createBufferSource();
+    node.buffer = buffer;
+    node.playbackRate.value = playbackRate;
+    node.connect(this.ctx.destination);
+    node.start(0);
   }
 
   onMasterVolume(value) {

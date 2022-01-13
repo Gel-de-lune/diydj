@@ -16,7 +16,7 @@ class UiController {
     this.a_gain = document.getElementsByTagName("input")[index++];
     this.eq_a_hi = document.getElementsByTagName("input")[index++];
     this.eq_a_mid = document.getElementsByTagName("input")[index++];
-    this.eq_a_lo = document.getElementsByTagName("input")[index++];
+    this.eq_a_low = document.getElementsByTagName("input")[index++];
     this.chkbox_a_monitor = document.getElementsByTagName("input")[index++];
     this.a_filter = document.getElementsByTagName("input")[index++];
     this.fader_a_input = document.getElementsByTagName("input")[index++];
@@ -25,7 +25,7 @@ class UiController {
     this.b_gain = document.getElementsByTagName("input")[index++];
     this.eq_b_hi = document.getElementsByTagName("input")[index++];
     this.eq_b_mid = document.getElementsByTagName("input")[index++];
-    this.eq_b_lo = document.getElementsByTagName("input")[index++];
+    this.eq_b_low = document.getElementsByTagName("input")[index++];
     this.chkbox_b_monitor = document.getElementsByTagName("input")[index++];
     this.b_filter = document.getElementsByTagName("input")[index++];
     this.fader_b_input = document.getElementsByTagName("input")[index++];
@@ -75,8 +75,6 @@ class UiController {
     // Monitor volume
     this.volume_monitor.addEventListener("change", (event) => { this.audioprocess.onMonitorVolume(event.target.value); });
 
-    // A
-    this.A.addEventListener("wheel", (event) => { this.onWheelASearch(event.deltaY>0?0x41:0x3F); });
     // A audio
     this.a_audio = document.getElementsByTagName("audio")[0];
     // Fader A pitch
@@ -94,7 +92,7 @@ class UiController {
     // Equalizer A middle
     this.eq_a_mid.addEventListener("change", (event) => { this.audioprocess.onEqualizerAMiddle(event.target.value); });
     // Equalizer A low
-    this.eq_a_lo.addEventListener("change", (event) => { this.audioprocess.onEqualizerALow(event.target.value); });
+    this.eq_a_low.addEventListener("change", (event) => { this.audioprocess.onEqualizerALow(event.target.value); });
     // A monitor cue
     this.chkbox_a_monitor.addEventListener("change", (event) => { this.audioprocess.onChangeAMonitorCue(event.target.checked); });
     // A filter
@@ -116,8 +114,6 @@ class UiController {
     this.btn_a_pad8.addEventListener("mousedown", (event) => { this.onClickAPad(event); });
     this.hotcue_a = [];
 
-    // B
-    this.B.addEventListener("wheel", (event) => { this.onWheelBSearch(event.deltaY>0?0x41:0x3F); });
     // B audio
     this.b_audio = document.getElementsByTagName("audio")[1];
     // Fader B pitch
@@ -135,7 +131,7 @@ class UiController {
     // Equalizer B middle
     this.eq_b_mid.addEventListener("change", (event) => { this.audioprocess.onEqualizerBMiddle(event.target.value); });
     // Equalizer B low
-    this.eq_b_lo.addEventListener("change", (event) => { this.audioprocess.onEqualizerBLow(event.target.value); });
+    this.eq_b_low.addEventListener("change", (event) => { this.audioprocess.onEqualizerBLow(event.target.value); });
     // B monitor cue
     this.chkbox_b_monitor.addEventListener("change", (event) => { this.audioprocess.onChangeBMonitorCue(event.target.checked); });
     // B filter
@@ -156,62 +152,11 @@ class UiController {
     this.btn_b_pad7.addEventListener("mousedown", (event) => { this.onClickBPad(event); });
     this.btn_b_pad8.addEventListener("mousedown", (event) => { this.onClickBPad(event); });
     this.hotcue_b = [];
-
-    for(let item in this.json) {
-      if(this.json[item] === "browse") this.json[item] = { downfunction:(event) => { this.btn_file_browse.click(); }, upfunction:(event) => {  } };
-    }
-
-    document.onkeydown = (event) => {
-      // event.preventDefault();
-      if(this.key_buffer[event.code] !== true) {
-        this.key_buffer[event.code] = true;
-        console.log("onkeydown " + event.key + " " + event.code);
-        if(event.code in this.json) this.json[event.code].downfunction();
-      }
-    };
-    document.onkeyup = (event) => {
-      // event.preventDefault();
-      if(this.key_buffer[event.code] !== false) {
-        this.key_buffer[event.code] = false;
-        console.log("onkeyup " + event.key + " " + event.code);
-        if(event.code in this.json) this.json[event.code].upfunction();
-      }
-    }
-    
-    document.onwheel = (event) => {
-      // event.preventDefault();
-    };
   }
 
   audioprocess;
   midicontroller;
-
-  key_buffer = {};
-  json = {
-    KeyA:{ downfunction:(event) => { this.onMouseDownACue(); }, upfunction:(event) => { this.onMouseUpACue(); } }, // A Cue
-    KeyB:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD A8
-    KeyC:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD A6
-    KeyD:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD A2
-    KeyF:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD A3
-    KeyG:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD A4
-    KeyH:{ downfunction:(event) => { this.onMouseDownBCue(); }, upfunction:(event) => { this.onMouseUpBCue(); } }, // B Cue
-    KeyJ:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD B1
-    KeyK:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD B2
-    KeyL:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD B3
-    KeyM:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD B5
-    KeyN:{ downfunction:(event) => { this.onClickBPlay(); }, upfunction:(event) => {  } }, // B Play
-    KeyW:"browse",
-    KeyS:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD A1
-    KeyV:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD A7
-    KeyX:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD A5
-    KeyZ:{ downfunction:(event) => { this.onClickAPlay(); }, upfunction:(event) => {  } }, // A Play
-    Semicolon:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD B4
-    Comma:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD B6
-    Period:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD B7
-    Slash:{ downfunction:(event) => {  }, upfunction:(event) => {  } }, // PAD B8
-    Digit1:{ downfunction:(event) => { this.onLoadADeck(); }, upfunction:(event) => {  } }, // A Load
-    Digit2:{ downfunction:(event) => { this.onLoadBDeck(); }, upfunction:(event) => {  } }, // B Load
-  };
+  hidcontroller;
 
   animationFrameClock() {
     let m = 60;
@@ -250,16 +195,25 @@ class UiController {
   }
 
   onLoadADeck(event) {
-    const reader = new FileReader();
-    reader.onload = (event) => {
+    // Read as data url
+    const reader_data_url = new FileReader();
+    reader_data_url.addEventListener("load", (event) => {
       // Set selected file to A audio source
       this.a_audio.src = event.target.result;
       // Keep set pitch
       this.onFaderAPitch(this.fader_a_pitch.value);
       // Set A cue point to 0
       this.point_a_cue = 0;
-    }
-    reader.readAsDataURL(this.filelist.options[this.filelist.selectedIndex].file);
+    });
+    reader_data_url.readAsDataURL(this.filelist.options[this.filelist.selectedIndex].file);
+
+    // Read as array buffer
+    const reader_array_buffer = new FileReader();
+    reader_array_buffer.addEventListener("load", (event) => {
+      // Register audio buffer in audio process
+      this.audioprocess.onLoadAArrayBuffer(event.target.result);
+    });
+    reader_array_buffer.readAsArrayBuffer(this.filelist.options[this.filelist.selectedIndex].file);
   }
 
   onFaderAPitch(value) {
@@ -274,22 +228,6 @@ class UiController {
     }
     if(64 <= value) {
       this.audioprocess.onFilterAHighpass((value - 64)*2);
-    }
-  }
-
-  onWheelASearch(value) {
-    if(0x01<=value && value<=0x20) {
-      // 01->20
-      this.a_audio.currentTime+=((value - 0x00)/3);
-    } else if(0x7F>=value && value>=0x61) {
-      // 7F->61
-      this.a_audio.currentTime-=((0x80 - value)/3);
-    } else if(0x41<=value && value<=0x60) {
-      // 41->60
-      this.a_audio.currentTime+=((value - 0x40)/3);
-    } else if(0x3F>=value && value>=0x21) {
-      // 3F->21
-      this.a_audio.currentTime-=((0x40 - value)/3);
     }
   }
 
@@ -324,8 +262,9 @@ class UiController {
   }
 
   onLoadBDeck(event) {
-    const reader = new FileReader();
-    reader.onload = (event) => {
+    // Read as data url
+    const reader_data_url = new FileReader();
+    reader_data_url.onload = (event) => {
       // Set selected file to B audio source
       this.b_audio.src = event.target.result;
       // Keep set pitch
@@ -333,7 +272,15 @@ class UiController {
       // Set B cue point to 0
       this.point_b_cue = 0;
     }
-    reader.readAsDataURL(this.filelist.options[this.filelist.selectedIndex].file);
+    reader_data_url.readAsDataURL(this.filelist.options[this.filelist.selectedIndex].file);
+
+    // Read as array buffer
+    const reader_array_buffer = new FileReader();
+    reader_array_buffer.addEventListener("load", (event) => {
+      // Register audio buffer in audio process
+      this.audioprocess.onLoadBArrayBuffer(event.target.result);
+    });
+    reader_array_buffer.readAsArrayBuffer(this.filelist.options[this.filelist.selectedIndex].file);
   }
 
   onFaderBPitch(value) {
@@ -351,22 +298,6 @@ class UiController {
     }
   }
 
-  onWheelBSearch(value) {
-    if(0x01<=value && value<=0x20) {
-      // 01->20
-      this.b_audio.currentTime+=((value - 0x00)/3);
-    } else if(0x7F>=value && value>=0x61) {
-      // 7F->61
-      this.b_audio.currentTime-=((0x80 - value)/3);
-    } else if(0x41<=value && value<=0x60) {
-      // 41->60
-      this.b_audio.currentTime+=((value - 0x40)/3);
-    } else if(0x3F>=value && value>=0x21) {
-      // 3F->21
-      this.b_audio.currentTime-=((0x40 - value)/3);
-    }
-  }
-
   onClickAPad(event) {
     let value = event.target.value;
     if(this.radio_a_hotcue.checked) {
@@ -375,6 +306,8 @@ class UiController {
         if(this.hotcue_a[value]) {
           // Return back target number time on A hot cue array
           this.a_audio.currentTime = this.hotcue_a[value];
+          // Play
+          if(this.a_audio.paused) this.a_audio.play();
         } else {
           // Register current time to target number A hot cue array
           this.hotcue_a[value] = this.a_audio.currentTime;
@@ -452,6 +385,8 @@ class UiController {
         } else {
           // Register current time to target number B hot cue array
           this.hotcue_b[value] = this.b_audio.currentTime;
+          // Play
+          if(this.b_audio.paused) this.b_audio.play();
         }
       } else {
         // Unregister target number time from B hot cue array
